@@ -30,8 +30,8 @@
                             <!-- Card 1: Recently Added Products -->
                             <f:Card class="dashboardCard">
                                 <f:header>
-                                    <f:cards:Header
-                                        xmlns:f.cards="sap.f.cards"
+                                    <cards:Header
+                                        xmlns:cards="sap.f.cards"
                                         title="{i18n>homeLatestProducts}"
                                         subtitle="{i18n>homeShowingLatest}"
                                         statusText="{i18n>viewAll}"
@@ -73,8 +73,8 @@
                             <!-- Card 2: Recently Added Suppliers -->
                             <f:Card class="dashboardCard">
                                 <f:header>
-                                    <f:cards:Header
-                                        xmlns:f.cards="sap.f.cards"
+                                    <cards:Header
+                                        xmlns:cards="sap.f.cards"
                                         title="{i18n>homeLatestSuppliers}"
                                         subtitle="{i18n>homeShowingLatest}"
                                         statusText="{i18n>viewAll}"
