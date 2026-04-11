@@ -1,0 +1,19 @@
+# build results
+dist
+coverage
+.nyc_output
+report
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+.DS_Store
+.env
+tmp/
