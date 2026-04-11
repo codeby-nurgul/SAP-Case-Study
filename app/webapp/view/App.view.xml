@@ -24,7 +24,7 @@
 
         <!-- ═══ LEFT SIDE NAVIGATION ═══ -->
         <tnt:sideContent>
-            <tnt:SideNavigation id="sideNav" selectedKey="home">
+            <tnt:SideNavigation id="sideNav" selectedKey="home" class="sidebarNav">
                 <tnt:NavigationList id="navList">
                     <tnt:NavigationListItem
                         text="{i18n>navHome}"

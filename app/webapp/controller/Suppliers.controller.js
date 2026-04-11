@@ -29,6 +29,14 @@ sap.ui.define([
             });
             this.setModel(oFilterModel, "filterModel");
 
+            // JSON model for CSV validation state
+            var oCSVModel = new JSONModel({
+                rowCountText: "",
+                results: [],
+                canUpload: false
+            });
+            this.setModel(oCSVModel, "csvModel");
+
             // Refresh data when navigating to this page
             this.getRouter()
                 .getRoute("suppliers")
@@ -354,15 +362,28 @@ sap.ui.define([
         },
 
         onCSVFileChange: function (oEvent) {
+            var oCSVModel = this.getModel("csvModel");
+            oCSVModel.setProperty("/results", []);
+            oCSVModel.setProperty("/canUpload", false);
+
             var aFiles = oEvent.getParameter("files");
+            var oFile = null;
             if (aFiles && aFiles.length > 0) {
-                this._oCSVFile = aFiles[0];
+                oFile = aFiles[0];
             } else {
                 var oFileUploader = oEvent.getSource();
                 var oDomRef = oFileUploader.getFocusDomRef();
                 if (oDomRef && oDomRef.files) {
-                    this._oCSVFile = oDomRef.files[0];
+                    oFile = oDomRef.files[0];
                 }
+            }
+
+            this._oCSVFile = oFile;
+            if (oFile) {
+                oCSVModel.setProperty("/rowCountText", "Selected file: " + oFile.name);
+                oCSVModel.setProperty("/canUpload", true);
+            } else {
+                oCSVModel.setProperty("/rowCountText", "");
             }
         },
 
@@ -387,42 +408,63 @@ sap.ui.define([
         _callSupplierCSVAction: function (sCsvContent) {
             var oModel = this.getModel();
             var oBundle = this.getResourceBundle();
-            var oMsgStrip = this.byId("supplierCSVMessage");
+            var oCSVModel = this.getModel("csvModel");
+
+            oCSVModel.setProperty("/canUpload", false);
 
             var oAction = oModel.bindContext("/uploadSuppliersCSV(...)");
             oAction.setParameter("csv", sCsvContent);
 
             oAction.execute().then(function () {
                 var oResult = oAction.getBoundContext().getObject();
+                var aResults = [];
+
+                if (oResult.success > 0) {
+                    aResults.push({
+                        row: "-",
+                        name: "Records Inserted",
+                        message: oBundle.getText("csvUploadSuccess", [oResult.success]),
+                        type: "Success"
+                    });
+                }
+
+                if (oResult.errors && oResult.errors.length > 0) {
+                    oResult.errors.forEach(function (err) {
+                        aResults.push({
+                            row: err.row.toString(),
+                            name: "Column [" + err.column + "]",
+                            message: err.message,
+                            type: "Error"
+                        });
+                    });
+                } else if (oResult.failed > 0) {
+                    aResults.push({
+                        row: "-",
+                        name: "Import Failed",
+                        message: oResult.failed + " records failed to import.",
+                        type: "Error"
+                    });
+                }
+
+                oCSVModel.setProperty("/results", aResults);
 
                 if (oResult.failed === 0) {
-                    oMsgStrip.setText(
-                        oBundle.getText("csvUploadSuccess", [oResult.success])
-                    );
-                    oMsgStrip.setType("Success");
+                     MessageToast.show(oBundle.getText("csvUploadSuccess", [oResult.success]));
+                     this.byId("suppliersTable").getBinding("rows").refresh();
                 } else {
-                    var sMsg = oBundle.getText("csvUploadPartial", [
-                        oResult.success, oResult.totalRows, oResult.failed
-                    ]);
-                    if (oResult.errors && oResult.errors.length > 0) {
-                        sMsg += "\n" + oResult.errors.map(function (err) {
-                            return oBundle.getText("csvRowError", [err.row, err.column, err.message]);
-                        }).join("\n");
-                    }
-                    oMsgStrip.setText(sMsg);
-                    oMsgStrip.setType("Warning");
+                     oCSVModel.setProperty("/canUpload", true);
                 }
-                oMsgStrip.setVisible(true);
 
-                // Refresh table
-                this.byId("suppliersTable").getBinding("rows").refresh();
             }.bind(this)).catch(function (oError) {
-                oMsgStrip.setText(
-                    oBundle.getText("csvUploadFailed") + ": " + oError.message
-                );
-                oMsgStrip.setType("Error");
-                oMsgStrip.setVisible(true);
-            });
+                var aResults = [{
+                    row: "-",
+                    name: "System Error",
+                    message: oError.message || oBundle.getText("csvUploadFailed"),
+                    type: "Error"
+                }];
+                oCSVModel.setProperty("/results", aResults);
+                oCSVModel.setProperty("/canUpload", true);
+            }.bind(this));
         },
 
         onCloseCSVDialog: function () {

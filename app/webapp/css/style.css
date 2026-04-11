@@ -1,52 +1,176 @@
-/* ═══════════════════════════════════════════
-   Product & Supplier Management — Custom CSS
-   Theme: sap_horizon (extends via custom rules)
-   ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   SAP UI5 CUSTOM THEME — MINIMAL BLUE (HORIZON)
+   ═══════════════════════════════════════════════ */
 
-/* Ensure full-height layout */
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+:root {
+    --sapPrimaryBlue: #0070F2;
+    --sapActiveNavBg: #EBF4FF;
+    --sapSuccessGreen: #188918;
+    --sapErrorRed: #BB0000;
+    --sapWarningOrange: #E76500;
+    --sapTextPrimary: #1D2D3E;
+    --sapTextSecondary: #556B82;
+    --sapBorder: #E5E5E5;
+    --sapBackground: #FFFFFF;
+    --sapCardShadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-/* ToolPage side navigation subtle styling */
-.sapTntToolPage .sapTntSideNavigation {
-    border-right: 1px solid #e0e0e0;
+/* ── Typography Override ── */
+* {
+    font-family: "72", "72full", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
 }
 
-/* Card hover effect on Home page */
-.sapFCard {
-    transition: box-shadow 0.2s ease-in-out;
-    border-radius: 8px;
-}
-.sapFCard:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+/* ── Layout & Sidebar ── */
+.sidebarNav {
+    width: 230px !important;
+    background-color: var(--sapBackground) !important;
+    border-right: 1px solid var(--sapBorder) !important;
 }
 
-/* Table row highlight on selection */
-.sapUiTableRowSel {
-    background-color: rgba(0, 112, 192, 0.08) !important;
+/* Sidebar Active Item */
+.sidebarNav .sapTntNavIItemActive, 
+.sidebarNav .sapTntNavIItemSelected {
+    background-color: var(--sapActiveNavBg) !important;
+    border-left: 3px solid var(--sapPrimaryBlue) !important;
 }
 
-/* CSV upload drop area styling */
-.csvDropArea {
-    border: 2px dashed #bbb;
-    border-radius: 8px;
-    padding: 2rem;
+.sidebarNav .sapTntNavIItemActive .sapMText,
+.sidebarNav .sapTntNavIItemSelected .sapMText,
+.sidebarNav .sapTntNavIItemActive .sapUiIcon,
+.sidebarNav .sapTntNavIItemSelected .sapUiIcon {
+    color: var(--sapPrimaryBlue) !important;
+}
+
+/* ── Header ── */
+.appHeader {
+    background-color: var(--sapBackground) !important;
+    border-bottom: 1px solid var(--sapBorder) !important;
+}
+
+.appTitleText {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    color: var(--sapTextPrimary) !important;
+}
+
+/* ── Home Page Styles ── */
+.heroSection {
+    padding: 3rem 2rem;
+    background-color: #fbfcfd;
     text-align: center;
-    background-color: #fafafa;
-    transition: border-color 0.2s, background-color 0.2s;
-}
-.csvDropArea:hover {
-    border-color: #0070c0;
-    background-color: #f0f7ff;
 }
 
-/* Filter bar subtle styling */
-.filterBar {
-    background-color: #f7f7f7;
-    border-radius: 8px;
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
+.heroTitle {
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    color: var(--sapPrimaryBlue) !important;
+}
+
+.heroSubtitle {
+    color: var(--sapTextSecondary) !important;
+    font-size: 14px !important;
+}
+
+/* Custom Cards */
+.dashboardCard {
+    background-color: var(--sapBackground) !important;
+    border-radius: 8px !important;
+    box-shadow: var(--sapCardShadow) !important;
+    border: none !important;
+}
+
+.cardTitle {
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    color: var(--sapTextPrimary) !important;
+}
+
+/* ── Table Styles (Products/Suppliers) ── */
+.blueTable .sapUiTableHdr {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--sapBorder) !important;
+}
+
+.blueTable .sapUiTableColHdr {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--sapPrimaryBlue) !important;
+}
+
+.blueTable .sapUiTableTr {
+    height: 52px !important;
+}
+
+.blueTable .sapUiTableTr:hover {
+    background-color: #F5F9FF !important;
+}
+
+/* Edit Mode Accent */
+.editingRow {
+    border-left: 3px solid var(--sapPrimaryBlue) !important;
+    background-color: #FAFBFD !important;
+}
+
+.editInput {
+    border: 1px solid var(--sapPrimaryBlue) !important;
+    border-radius: 4px !important;
+}
+
+/* ── Badges ── */
+.badgeStockGreen {
+    background-color: #e5f5e5 !important;
+    color: var(--sapSuccessGreen) !important;
+    font-weight: 600 !important;
+    border-radius: 12px !important;
+    padding: 2px 8px !important;
+}
+
+.badgeStockOrange {
+    background-color: #fff4eb !important;
+    color: var(--sapWarningOrange) !important;
+    font-weight: 600 !important;
+    border-radius: 12px !important;
+    padding: 2px 8px !important;
+}
+
+/* ── Buttons ── */
+.btnPrimary {
+    background-color: var(--sapPrimaryBlue) !important;
+    border: 1px solid var(--sapPrimaryBlue) !important;
+}
+
+.btnPrimary .sapMBtnContent {
+    color: white !important;
+}
+
+.btnOutline {
+    border: 1px solid var(--sapBorder) !important;
+    background-color: transparent !important;
+}
+
+.btnReject {
+    border: 1px solid var(--sapErrorRed) !important;
+    color: var(--sapErrorRed) !important;
+}
+
+/* ── CSV Dialog ── */
+.csvDialog {
+    border-radius: 12px !important;
+}
+
+.csvRowSuccess {
+    border-left: 4px solid var(--sapSuccessGreen) !important;
+}
+
+.csvRowError {
+    border-left: 4px solid var(--sapErrorRed) !important;
+    background-color: #fff8f8 !important;
+}
+
+/* Sticky Action Bar */
+.stickyBottomBtn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
 }

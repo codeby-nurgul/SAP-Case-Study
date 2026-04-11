@@ -30,6 +30,14 @@ sap.ui.define([
             });
             this.setModel(oFilterModel, "filterModel");
 
+            // JSON model for CSV validation state
+            var oCSVModel = new JSONModel({
+                rowCountText: "",
+                results: [],
+                canUpload: false
+            });
+            this.setModel(oCSVModel, "csvModel");
+
             // Refresh data when navigating to this page
             this.getRouter()
                 .getRoute("products")
@@ -396,18 +404,31 @@ sap.ui.define([
             }.bind(this));
         },
 
-        /** Store selected file reference when user picks a CSV */
+        /** Store selected file reference when user picks a CSV and update UI state */
         onCSVFileChange: function (oEvent) {
+            var oCSVModel = this.getModel("csvModel");
+            oCSVModel.setProperty("/results", []);
+            oCSVModel.setProperty("/canUpload", false);
+
             var aFiles = oEvent.getParameter("files");
+            var oFile = null;
             if (aFiles && aFiles.length > 0) {
-                this._oCSVFile = aFiles[0];
+                oFile = aFiles[0];
             } else {
                 // Fallback: access file via DOM
                 var oFileUploader = oEvent.getSource();
                 var oDomRef = oFileUploader.getFocusDomRef();
                 if (oDomRef && oDomRef.files) {
-                    this._oCSVFile = oDomRef.files[0];
+                    oFile = oDomRef.files[0];
                 }
+            }
+            
+            this._oCSVFile = oFile;
+            if (oFile) {
+                oCSVModel.setProperty("/rowCountText", "Selected file: " + oFile.name);
+                oCSVModel.setProperty("/canUpload", true);
+            } else {
+                oCSVModel.setProperty("/rowCountText", "");
             }
         },
 
@@ -434,42 +455,66 @@ sap.ui.define([
         _callProductCSVAction: function (sCsvContent) {
             var oModel = this.getModel();
             var oBundle = this.getResourceBundle();
-            var oMsgStrip = this.byId("productCSVMessage");
+            var oCSVModel = this.getModel("csvModel");
+
+            // Temporary set loading state (optional, just disable button)
+            oCSVModel.setProperty("/canUpload", false);
 
             var oAction = oModel.bindContext("/uploadProductsCSV(...)");
             oAction.setParameter("csv", sCsvContent);
 
             oAction.execute().then(function () {
                 var oResult = oAction.getBoundContext().getObject();
+                var aResults = [];
 
-                if (oResult.failed === 0) {
-                    oMsgStrip.setText(
-                        oBundle.getText("csvUploadSuccess", [oResult.success])
-                    );
-                    oMsgStrip.setType("Success");
-                } else {
-                    var sMsg = oBundle.getText("csvUploadPartial", [
-                        oResult.success, oResult.totalRows, oResult.failed
-                    ]);
-                    if (oResult.errors && oResult.errors.length > 0) {
-                        sMsg += "\n" + oResult.errors.map(function (err) {
-                            return oBundle.getText("csvRowError", [err.row, err.column, err.message]);
-                        }).join("\n");
-                    }
-                    oMsgStrip.setText(sMsg);
-                    oMsgStrip.setType("Warning");
+                if (oResult.success > 0) {
+                    aResults.push({
+                        row: "-",
+                        name: "Records Inserted",
+                        message: oBundle.getText("csvUploadSuccess", [oResult.success]),
+                        type: "Success"
+                    });
                 }
-                oMsgStrip.setVisible(true);
 
-                // Refresh table to show newly imported rows
-                this.byId("productsTable").getBinding("rows").refresh();
+                if (oResult.errors && oResult.errors.length > 0) {
+                    oResult.errors.forEach(function (err) {
+                        aResults.push({
+                            row: err.row.toString(),
+                            name: "Column [" + err.column + "]",
+                            message: err.message,
+                            type: "Error"
+                        });
+                    });
+                } else if (oResult.failed > 0) {
+                    aResults.push({
+                        row: "-",
+                        name: "Import Failed",
+                        message: oResult.failed + " records failed to import.",
+                        type: "Error"
+                    });
+                }
+
+                oCSVModel.setProperty("/results", aResults);
+
+                // If fully successful, could close or let user see. Disabling upload button to prevent double submit
+                if (oResult.failed === 0) {
+                     MessageToast.show(oBundle.getText("csvUploadSuccess", [oResult.success]));
+                     // Refresh table to show newly imported rows
+                     this.byId("productsTable").getBinding("rows").refresh();
+                } else {
+                     oCSVModel.setProperty("/canUpload", true); // Let them try again if there were errors
+                }
+
             }.bind(this)).catch(function (oError) {
-                oMsgStrip.setText(
-                    oBundle.getText("csvUploadFailed") + ": " + oError.message
-                );
-                oMsgStrip.setType("Error");
-                oMsgStrip.setVisible(true);
-            });
+                var aResults = [{
+                    row: "-",
+                    name: "System Error",
+                    message: oError.message || oBundle.getText("csvUploadFailed"),
+                    type: "Error"
+                }];
+                oCSVModel.setProperty("/results", aResults);
+                oCSVModel.setProperty("/canUpload", true);
+            }.bind(this));
         },
 
         /** Close the CSV upload dialog */

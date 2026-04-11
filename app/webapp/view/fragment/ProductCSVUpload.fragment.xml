@@ -4,54 +4,69 @@
     xmlns:u="sap.ui.unified"
 >
     <Dialog
-        title="{i18n>csvUploadProducts}"
+        title="{i18n>csvUploadTitle}"
         contentWidth="500px"
-        resizable="true"
+        class="csvDialog"
     >
         <content>
-            <VBox class="sapUiSmallMargin">
-
-                <!-- File Picker -->
+            <VBox class="sapUiMediumMargin">
                 <u:FileUploader
                     id="productCSVUploader"
                     fileType="csv"
                     placeholder="{i18n>csvSelectFile}"
-                    buttonText="{i18n>csvSelectFile}"
+                    buttonText="Browse"
                     change=".onCSVFileChange"
-                    style="Emphasized"
                     width="100%"
+                    class="sapUiSmallMarginBottom"
                 />
 
-                <!-- Result Message Strip (hidden by default) -->
-                <MessageStrip
-                    id="productCSVMessage"
-                    visible="false"
-                    showCloseButton="true"
-                    class="sapUiSmallMarginTop"
-                />
+                <!-- Info on number of rows after selection (if applicable) -->
+                <Text text="{csvModel>/rowCountText}" visible="{= !!${csvModel>/rowCountText} }" class="heroSubtitle sapUiSmallMarginBottom" />
 
-                <!-- CSV Format Hint -->
-                <MessageStrip
-                    text="CSV format: name, description, price, stock (with header row)"
-                    type="Information"
-                    showCloseButton="false"
-                    class="sapUiSmallMarginTop"
-                />
+                <!-- Validation Checklist -->
+                <VBox visible="{= ${csvModel>/results}.length > 0 }">
+                    <Title text="Validation Results" level="H4" class="cardTitle sapUiSmallMarginBottom" />
+                    <List
+                        items="{csvModel>/results}"
+                        noDataText="No validation run yet"
+                    >
+                        <CustomListItem>
+                            <HBox class="{= ${csvModel>type} === 'Success' ? 'csvRowSuccess' : 'csvRowError' } sapUiSmallMargin" alignItems="Center" justifyContent="SpaceBetween">
+                                <HBox alignItems="Center">
+                                    <core:Icon 
+                                        src="{= ${csvModel>type} === 'Success' ? 'sap-icon://accept' : 'sap-icon://decline' }" 
+                                        color="{= ${csvModel>type} === 'Success' ? '#188918' : '#BB0000' }" 
+                                        class="sapUiSmallMarginEnd" />
+                                    <VBox>
+                                        <Text text="Row {csvModel>row}: {csvModel>name}" class="cardTitle" />
+                                        <Text text="{csvModel>message}" visible="{= ${csvModel>type} !== 'Success' }" class="heroSubtitle" />
+                                    </VBox>
+                                </HBox>
+                                <ObjectStatus 
+                                    text="{= ${csvModel>type} === 'Success' ? 'OK' : 'Error' }" 
+                                    state="{csvModel>type}" />
+                            </HBox>
+                        </CustomListItem>
+                    </List>
+                </VBox>
 
+                <!-- Hidden legacy strip -->
+                <MessageStrip id="productCSVMessage" visible="false" />
             </VBox>
         </content>
         <beginButton>
             <Button
                 text="{i18n>uploadCSV}"
-                type="Emphasized"
-                icon="sap-icon://upload"
                 press=".onExecuteProductCSVUpload"
+                class="btnPrimary"
+                enabled="{= ${csvModel>/canUpload} }"
             />
         </beginButton>
         <endButton>
             <Button
-                text="{i18n>close}"
+                text="{i18n>cancel}"
                 press=".onCloseCSVDialog"
+                class="btnOutline"
             />
         </endButton>
     </Dialog>

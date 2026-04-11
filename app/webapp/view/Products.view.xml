@@ -14,122 +14,154 @@
              BEGIN COLUMN — Master: Product Table
              ═══════════════════════════════════════════════ -->
         <f:beginColumnPages>
-            <Page id="productsListPage" title="{i18n>productsTitle}" enableScrolling="false">
+            <Page id="productsListPage" showHeader="false" enableScrolling="false">
                 <content>
-                    <t:Table
-                        id="productsTable"
-                        rows="{
-                            path: '/Products',
-                            parameters: {
-                                $count: true,
-                                $expand: 'supplier'
-                            },
-                            sorter: { path: 'createdAt', descending: true }
-                        }"
-                        selectionMode="MultiToggle"
-                        selectionBehavior="RowSelector"
-                        rowSelectionChange=".onRowSelectionChange"
-                        sort=".onSort"
-                        visibleRowCountMode="Auto"
-                        minAutoRowCount="5"
-                        enableSelectAll="true"
-                    >
-                        <!-- ── TOOLBAR ── -->
-                        <t:extension>
-                            <OverflowToolbar>
-                                <ToolbarSpacer />
-                                <SearchField
-                                    id="productsSearch"
-                                    width="250px"
-                                    search=".onSearch"
-                                    placeholder="{i18n>searchProducts}"
-                                />
-                                <Button
-                                    icon="sap-icon://filter"
-                                    text="{i18n>filter}"
-                                    press=".onOpenFilterDialog"
-                                    type="Transparent"
-                                />
-                                <ToolbarSeparator />
-                                <Button
-                                    icon="sap-icon://add"
-                                    text="{i18n>addProduct}"
-                                    press=".onAddProduct"
-                                    type="Emphasized"
-                                />
-                                <Button
-                                    icon="sap-icon://delete"
-                                    text="{i18n>delete}"
-                                    press=".onDeleteProducts"
-                                    type="Reject"
-                                />
-                                <Button
-                                    icon="sap-icon://upload"
-                                    text="{i18n>uploadCSV}"
-                                    press=".onOpenCSVDialog"
-                                    type="Transparent"
-                                />
-                                <ToolbarSeparator />
-                                <Button
-                                    icon="sap-icon://save"
-                                    text="{i18n>save}"
-                                    press=".onSaveChanges"
-                                    type="Emphasized"
-                                />
-                                <Button
-                                    icon="sap-icon://sys-cancel-2"
-                                    text="{i18n>cancel}"
-                                    press=".onCancelChanges"
-                                    type="Transparent"
-                                />
-                            </OverflowToolbar>
-                        </t:extension>
+                    <VBox fitContainer="true">
+                        <!-- Custom Page Header -->
+                        <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiMediumMargin">
+                            <HBox alignItems="Center">
+                                <core:Icon src="sap-icon://product" size="2rem" color="#0070F2" class="sapUiSmallMarginEnd" />
+                                <VBox>
+                                    <Title text="{i18n>productsTitle}" class="heroTitle" />
+                                    <Text text="Manage your product inventory and suppliers" class="heroSubtitle" />
+                                </VBox>
+                            </HBox>
+                        </HBox>
 
-                        <!-- ── TABLE COLUMNS ── -->
-                        <t:columns>
-                            <t:Column width="14rem" sortProperty="name" filterProperty="name">
-                                <Label text="{i18n>productName}" />
-                                <t:template>
-                                    <Input value="{name}" valueLiveUpdate="true" />
-                                </t:template>
-                            </t:Column>
+                        <t:Table
+                            id="productsTable"
+                            class="blueTable sapUiSmallMarginBeginEnd"
+                            rows="{
+                                path: '/Products',
+                                parameters: {
+                                    $count: true,
+                                    $expand: 'supplier'
+                                },
+                                sorter: { path: 'createdAt', descending: true }
+                            }"
+                            selectionMode="MultiToggle"
+                            selectionBehavior="RowSelector"
+                            rowSelectionChange=".onRowSelectionChange"
+                            sort=".onSort"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="10"
+                            enableSelectAll="true"
+                        >
+                            <!-- ── TOOLBAR ── -->
+                            <t:extension>
+                                <OverflowToolbar style="Clear">
+                                    <Title text="Products ({$count})" level="H2" class="cardTitle" />
+                                    <ToolbarSpacer />
+                                    <SearchField
+                                        id="productsSearch"
+                                        width="300px"
+                                        search=".onSearch"
+                                        placeholder="{i18n>searchProducts}"
+                                    />
+                                    <Button
+                                        icon="sap-icon://filter"
+                                        press=".onOpenFilterDialog"
+                                        type="Transparent"
+                                        tooltip="{i18n>filter}"
+                                    />
+                                    <Button
+                                        text="Create"
+                                        icon="sap-icon://add"
+                                        press=".onAddProduct"
+                                        class="btnPrimary"
+                                    />
+                                    <Button
+                                        text="CSV Upload"
+                                        icon="sap-icon://upload"
+                                        press=".onOpenCSVDialog"
+                                        class="btnOutline"
+                                    />
+                                    <Button
+                                        text="Delete"
+                                        icon="sap-icon://delete"
+                                        press=".onDeleteProducts"
+                                        class="btnReject"
+                                    />
+                                </OverflowToolbar>
+                            </t:extension>
 
-                            <t:Column sortProperty="description" filterProperty="description">
-                                <Label text="{i18n>productDescription}" />
-                                <t:template>
-                                    <Input value="{description}" />
-                                </t:template>
-                            </t:Column>
+                            <!-- ── TABLE COLUMNS ── -->
+                            <t:columns>
+                                <!-- Name -->
+                                <t:Column width="15rem" sortProperty="name" filterProperty="name">
+                                    <Label text="Name" />
+                                    <t:template>
+                                        <Input value="{name}" valueLiveUpdate="true" class="editInput" />
+                                    </t:template>
+                                </t:Column>
 
-                            <t:Column width="8rem" sortProperty="price" filterProperty="price" hAlign="End">
-                                <Label text="{i18n>productPrice}" />
-                                <t:template>
-                                    <Input value="{price}" type="Number" />
-                                </t:template>
-                            </t:Column>
+                                <!-- Description -->
+                                <t:Column width="20rem" sortProperty="description">
+                                    <Label text="Description" />
+                                    <t:template>
+                                        <Input value="{description}" class="editInput" />
+                                    </t:template>
+                                </t:Column>
 
-                            <t:Column width="7rem" sortProperty="stock" filterProperty="stock" hAlign="End">
-                                <Label text="{i18n>productStock}" />
-                                <t:template>
-                                    <Input value="{stock}" type="Number" />
-                                </t:template>
-                            </t:Column>
+                                <!-- Price -->
+                                <t:Column width="8rem" hAlign="End" sortProperty="price">
+                                    <Label text="Price" />
+                                    <t:template>
+                                        <Input value="{price}" type="Number" textAlign="End" class="editInput" />
+                                    </t:template>
+                                </t:Column>
 
-                            <t:Column width="12rem">
-                                <Label text="{i18n>productSupplier}" />
-                                <t:template>
-                                    <Select
-                                        selectedKey="{supplier_ID}"
-                                        forceSelection="false"
-                                        items="{suppliersList>/items}"
-                                        autoAdjustWidth="true"
-                                    >
-                                        <core:Item key="{suppliersList>ID}" text="{suppliersList>name}" />
-                                    </Select>
-                                </t:template>
-                            </t:Column>
-                        </t:columns>
-                    </t:Table>
+                                <!-- Currency (Static for now as per ref) -->
+                                <t:Column width="6rem">
+                                    <Label text="Currency" />
+                                    <t:template>
+                                        <Text text="TRY" />
+                                    </t:template>
+                                </t:Column>
+
+                                <!-- Stock -->
+                                <t:Column width="8rem" hAlign="End" sortProperty="stock">
+                                    <Label text="Stock" />
+                                    <t:template>
+                                        <Input value="{stock}" type="Number" textAlign="End" class="editInput" />
+                                    </t:template>
+                                </t:Column>
+
+                                <!-- Supplier -->
+                                <t:Column width="14rem">
+                                    <Label text="Supplier" />
+                                    <t:template>
+                                        <Select
+                                            selectedKey="{supplier_ID}"
+                                            forceSelection="false"
+                                            items="{suppliersList>/items}"
+                                            width="100%"
+                                            class="editInput"
+                                        >
+                                            <core:Item key="{suppliersList>ID}" text="{suppliersList>name}" />
+                                        </Select>
+                                    </t:template>
+                                </t:Column>
+
+                                <!-- Actions -->
+                                <t:Column width="8rem" hAlign="Center">
+                                    <Label text="Actions" />
+                                    <t:template>
+                                        <HBox justifyContent="Center">
+                                            <Button icon="sap-icon://grid" type="Transparent" press=".onRowSelectionChange" tooltip="View Detail" />
+                                            <Button icon="sap-icon://edit" type="Transparent" tooltip="Edit Row" />
+                                        </HBox>
+                                    </t:template>
+                                </t:Column>
+                            </t:columns>
+                        </t:Table>
+                    </VBox>
+
+                    <!-- Sticky Save/Cancel Buttons -->
+                    <HBox class="stickyBottomBtn">
+                        <Button text="Save" icon="sap-icon://save" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" height="40px" />
+                        <Button text="Cancel" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" height="40px" />
+                    </HBox>
                 </content>
             </Page>
         </f:beginColumnPages>
@@ -144,27 +176,39 @@
                     <Button icon="sap-icon://decline"      press=".onCloseDetail"            tooltip="{i18n>close}" />
                 </headerContent>
                 <content>
-                    <form:SimpleForm
-                        id="productDetailForm"
-                        editable="false"
-                        layout="ResponsiveGridLayout"
-                        labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
-                        class="sapUiMediumMarginTopBottom"
-                    >
-                        <form:title>
-                            <core:Title text="{i18n>productDetail}" />
-                        </form:title>
-                        <Label text="{i18n>productName}" />
-                        <Text text="{name}" />
-                        <Label text="{i18n>productDescription}" />
-                        <Text text="{description}" />
-                        <Label text="{i18n>productPrice}" />
-                        <ObjectNumber number="{price}" unit="TRY" />
-                        <Label text="{i18n>productStock}" />
-                        <ObjectNumber number="{stock}" />
-                        <Label text="{i18n>productSupplier}" />
-                        <Text text="{supplier/name}" />
-                    </form:SimpleForm>
+                    <VBox class="sapUiMediumMargin">
+                        <HBox alignItems="Center" class="sapUiMediumMarginBottom">
+                            <core:Icon src="sap-icon://product" size="3rem" color="#0070F2" class="sapUiSmallMarginEnd" />
+                            <VBox>
+                                <Title text="{name}" class="heroTitle" />
+                                <Text text="ID: {ID}" class="heroSubtitle" />
+                            </VBox>
+                        </HBox>
+
+                        <form:SimpleForm
+                            id="productDetailForm"
+                            editable="false"
+                            layout="ResponsiveGridLayout"
+                            labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
+                            class="dashboardCard"
+                        >
+                            <Label text="{i18n>productName}" />
+                            <Text text="{name}" />
+                            <Label text="{i18n>productDescription}" />
+                            <Text text="{description}" />
+                            <Label text="{i18n>productPrice}" />
+                            <ObjectNumber number="{price}" unit="TRY" />
+                            <Label text="{i18n>productStock}" />
+                            <HBox alignItems="Center">
+                                <Text text="{stock}" class="sapUiTinyMarginEnd" />
+                                <Text 
+                                    text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }" 
+                                    class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
+                            </HBox>
+                            <Label text="{i18n>productSupplier}" />
+                            <Text text="{supplier/name}" />
+                        </form:SimpleForm>
+                    </VBox>
                 </content>
             </Page>
         </f:midColumnPages>

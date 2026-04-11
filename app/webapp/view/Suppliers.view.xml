@@ -14,113 +14,135 @@
              BEGIN COLUMN — Master: Supplier Table
              ═══════════════════════════════════════════════ -->
         <f:beginColumnPages>
-            <Page id="suppliersListPage" title="{i18n>suppliersTitle}" enableScrolling="false">
+            <Page id="suppliersListPage" showHeader="false" enableScrolling="false">
                 <content>
-                    <t:Table
-                        id="suppliersTable"
-                        rows="{
-                            path: '/Suppliers',
-                            parameters: {
-                                $count: true
-                            },
-                            sorter: { path: 'createdAt', descending: true }
-                        }"
-                        selectionMode="MultiToggle"
-                        selectionBehavior="RowSelector"
-                        rowSelectionChange=".onRowSelectionChange"
-                        sort=".onSort"
-                        visibleRowCountMode="Auto"
-                        minAutoRowCount="5"
-                        enableSelectAll="true"
-                    >
-                        <!-- ── TOOLBAR ── -->
-                        <t:extension>
-                            <OverflowToolbar>
-                                <ToolbarSpacer />
-                                <SearchField
-                                    id="suppliersSearch"
-                                    width="250px"
-                                    search=".onSearch"
-                                    placeholder="{i18n>searchSuppliers}"
-                                />
-                                <Button
-                                    icon="sap-icon://filter"
-                                    text="{i18n>filter}"
-                                    press=".onOpenFilterDialog"
-                                    type="Transparent"
-                                />
-                                <ToolbarSeparator />
-                                <Button
-                                    icon="sap-icon://add"
-                                    text="{i18n>addSupplier}"
-                                    press=".onAddSupplier"
-                                    type="Emphasized"
-                                />
-                                <Button
-                                    icon="sap-icon://delete"
-                                    text="{i18n>delete}"
-                                    press=".onDeleteSuppliers"
-                                    type="Reject"
-                                />
-                                <Button
-                                    icon="sap-icon://upload"
-                                    text="{i18n>uploadCSV}"
-                                    press=".onOpenCSVDialog"
-                                    type="Transparent"
-                                />
-                                <ToolbarSeparator />
-                                <Button
-                                    icon="sap-icon://save"
-                                    text="{i18n>save}"
-                                    press=".onSaveChanges"
-                                    type="Emphasized"
-                                />
-                                <Button
-                                    icon="sap-icon://sys-cancel-2"
-                                    text="{i18n>cancel}"
-                                    press=".onCancelChanges"
-                                    type="Transparent"
-                                />
-                            </OverflowToolbar>
-                        </t:extension>
+                    <VBox fitContainer="true">
+                        <!-- Custom Page Header -->
+                        <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiMediumMargin">
+                            <HBox alignItems="Center">
+                                <core:Icon src="sap-icon://supplier" size="2rem" color="#0070F2" class="sapUiSmallMarginEnd" />
+                                <VBox>
+                                    <Title text="{i18n>suppliersTitle}" class="heroTitle" />
+                                    <Text text="Manage your supplier network and contact information" class="heroSubtitle" />
+                                </VBox>
+                            </HBox>
+                        </HBox>
 
-                        <!-- ── TABLE COLUMNS ── -->
-                        <t:columns>
-                            <t:Column width="14rem" sortProperty="name" filterProperty="name">
-                                <Label text="{i18n>supplierName}" />
-                                <t:template>
-                                    <Input value="{name}" valueLiveUpdate="true" />
-                                </t:template>
-                            </t:Column>
+                        <t:Table
+                            id="suppliersTable"
+                            class="blueTable sapUiSmallMarginBeginEnd"
+                            rows="{
+                                path: '/Suppliers',
+                                parameters: {
+                                    $count: true
+                                },
+                                sorter: { path: 'createdAt', descending: true }
+                            }"
+                            selectionMode="MultiToggle"
+                            selectionBehavior="RowSelector"
+                            rowSelectionChange=".onRowSelectionChange"
+                            sort=".onSort"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="10"
+                            enableSelectAll="true"
+                        >
+                            <!-- ── TOOLBAR ── -->
+                            <t:extension>
+                                <OverflowToolbar style="Clear">
+                                    <Title text="Suppliers ({$count})" level="H2" class="cardTitle" />
+                                    <ToolbarSpacer />
+                                    <SearchField
+                                        id="suppliersSearch"
+                                        width="300px"
+                                        search=".onSearch"
+                                        placeholder="{i18n>searchSuppliers}"
+                                    />
+                                    <Button
+                                        icon="sap-icon://filter"
+                                        press=".onOpenFilterDialog"
+                                        type="Transparent"
+                                        tooltip="{i18n>filter}"
+                                    />
+                                    <Button
+                                        text="Create"
+                                        icon="sap-icon://add"
+                                        press=".onAddSupplier"
+                                        class="btnPrimary"
+                                    />
+                                    <Button
+                                        text="CSV Upload"
+                                        icon="sap-icon://upload"
+                                        press=".onOpenCSVDialog"
+                                        class="btnOutline"
+                                    />
+                                    <Button
+                                        text="Delete"
+                                        icon="sap-icon://delete"
+                                        press=".onDeleteSuppliers"
+                                        class="btnReject"
+                                    />
+                                </OverflowToolbar>
+                            </t:extension>
 
-                            <t:Column width="14rem" sortProperty="email" filterProperty="email">
-                                <Label text="{i18n>supplierEmail}" />
-                                <t:template>
-                                    <Input value="{email}" type="Email" valueLiveUpdate="true" />
-                                </t:template>
-                            </t:Column>
+                            <!-- ── TABLE COLUMNS ── -->
+                            <t:columns>
+                                <!-- Name -->
+                                <t:Column width="15rem" sortProperty="name" filterProperty="name">
+                                    <Label text="Name" />
+                                    <t:template>
+                                        <Input value="{name}" valueLiveUpdate="true" class="editInput" />
+                                    </t:template>
+                                </t:Column>
 
-                            <t:Column width="10rem" sortProperty="phone" filterProperty="phone">
-                                <Label text="{i18n>supplierPhone}" />
-                                <t:template>
-                                    <Input value="{phone}" type="Tel" />
-                                </t:template>
-                            </t:Column>
+                                <!-- Email -->
+                                <t:Column width="15rem" sortProperty="email">
+                                    <Label text="Email" />
+                                    <t:template>
+                                        <Input value="{email}" type="Email" class="editInput" />
+                                    </t:template>
+                                </t:Column>
 
-                            <t:Column sortProperty="address" filterProperty="address">
-                                <Label text="{i18n>supplierAddress}" />
-                                <t:template>
-                                    <Input value="{address}" />
-                                </t:template>
-                            </t:Column>
-                        </t:columns>
-                    </t:Table>
+                                <!-- Phone -->
+                                <t:Column width="12rem" sortProperty="phone">
+                                    <Label text="Phone" />
+                                    <t:template>
+                                        <Input value="{phone}" type="Tel" class="editInput" />
+                                    </t:template>
+                                </t:Column>
+
+                                <!-- Address/City/Country -->
+                                <t:Column sortProperty="address">
+                                    <Label text="Location / Address" />
+                                    <t:template>
+                                        <Input value="{address}" class="editInput" />
+                                    </t:template>
+                                </t:Column>
+
+                                <!-- Actions -->
+                                <t:Column width="8rem" hAlign="Center">
+                                    <Label text="Actions" />
+                                    <t:template>
+                                        <HBox justifyContent="Center">
+                                            <Button icon="sap-icon://grid" type="Transparent" press=".onRowSelectionChange" tooltip="View Detail" />
+                                            <Button icon="sap-icon://edit" type="Transparent" tooltip="Edit Row" />
+                                        </HBox>
+                                    </t:template>
+                                </t:Column>
+                            </t:columns>
+                        </t:Table>
+                    </VBox>
+
+                    <!-- Sticky Save/Cancel -->
+                    <HBox class="stickyBottomBtn">
+                        <Button text="Save" icon="sap-icon://save" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" height="40px" />
+                        <Button text="Cancel" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" height="40px" />
+                    </HBox>
                 </content>
             </Page>
         </f:beginColumnPages>
 
         <!-- ═══════════════════════════════════════════════
-             MID COLUMN — Detail: Supplier Info + Products
+             MID COLUMN — Detail: Supplier Info
              ═══════════════════════════════════════════════ -->
         <f:midColumnPages>
             <Page id="supplierDetailPage" title="{i18n>supplierDetail}">
@@ -129,51 +151,54 @@
                     <Button icon="sap-icon://decline"      press=".onCloseDetail"            tooltip="{i18n>close}" />
                 </headerContent>
                 <content>
+                    <VBox class="sapUiMediumMargin">
+                        <HBox alignItems="Center" class="sapUiMediumMarginBottom">
+                            <core:Icon src="sap-icon://supplier" size="3rem" color="#0070F2" class="sapUiSmallMarginEnd" />
+                            <VBox>
+                                <Title text="{name}" class="heroTitle" />
+                                <Text text="Supplier ID: {ID}" class="heroSubtitle" />
+                            </VBox>
+                        </HBox>
 
-                    <!-- ── Supplier Info Form ── -->
-                    <form:SimpleForm
-                        id="supplierDetailForm"
-                        editable="false"
-                        layout="ResponsiveGridLayout"
-                        labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
-                        class="sapUiMediumMarginTopBottom"
-                    >
-                        <form:title>
-                            <core:Title text="{i18n>supplierDetail}" />
-                        </form:title>
-                        <Label text="{i18n>supplierName}" />
-                        <Text text="{name}" />
-                        <Label text="{i18n>supplierEmail}" />
-                        <Link text="{email}" href="mailto:{email}" />
-                        <Label text="{i18n>supplierPhone}" />
-                        <Text text="{phone}" />
-                        <Label text="{i18n>supplierAddress}" />
-                        <Text text="{address}" />
-                    </form:SimpleForm>
-
-                    <!-- ── Supplier's Products List ── -->
-                    <Panel headerText="{i18n>supplierProducts}" class="sapUiSmallMargin">
-                        <List
-                            id="supplierProductsList"
-                            items="{products}"
-                            noDataText="{i18n>noProducts}"
+                        <form:SimpleForm
+                            id="supplierDetailForm"
+                            editable="false"
+                            layout="ResponsiveGridLayout"
+                            class="dashboardCard"
                         >
-                            <ObjectListItem
-                                title="{name}"
-                                number="{
-                                    path: 'price',
-                                    type: 'sap.ui.model.type.Currency',
-                                    formatOptions: { showMeasure: false }
-                                }"
-                                numberUnit="TRY"
-                            >
-                                <attributes>
-                                    <ObjectAttribute text="{i18n>stock}: {stock}" />
-                                </attributes>
-                            </ObjectListItem>
-                        </List>
-                    </Panel>
+                            <Label text="{i18n>supplierName}" />
+                            <Text text="{name}" />
+                            <Label text="{i18n>supplierEmail}" />
+                            <Link text="{email}" href="mailto:{email}" />
+                            <Label text="{i18n>supplierPhone}" />
+                            <Text text="{phone}" />
+                            <Label text="{i18n>supplierAddress}" />
+                            <Text text="{address}" />
+                        </form:SimpleForm>
 
+                        <Panel headerText="{i18n>supplierProducts}" class="sapUiMediumMarginTop dashboardCard">
+                            <List
+                                id="supplierProductsList"
+                                items="{products}"
+                                noDataText="{i18n>noProducts}"
+                                showSeparators="Inner"
+                            >
+                                <CustomListItem>
+                                    <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
+                                        <VBox>
+                                            <Text text="{name}" class="cardTitle" />
+                                            <Text text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }" 
+                                                  class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
+                                        </VBox>
+                                        <VBox alignItems="End">
+                                            <Title text="{price}" level="H3" class="heroTitle" />
+                                            <Text text="TRY" class="heroSubtitle" />
+                                        </VBox>
+                                    </HBox>
+                                </CustomListItem>
+                            </List>
+                        </Panel>
+                    </VBox>
                 </content>
             </Page>
         </f:midColumnPages>
