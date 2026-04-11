@@ -1,0 +1,57 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    controllerName="product.management.controller.App"
+    displayBlock="true"
+>
+    <tnt:ToolPage id="toolPage" sideExpanded="{appView>/sideExpanded}">
+
+        <!-- ═══ TOP HEADER BAR ═══ -->
+        <tnt:header>
+            <tnt:ToolHeader>
+                <Button
+                    id="sideNavToggleBtn"
+                    icon="sap-icon://menu2"
+                    type="Transparent"
+                    press=".onToggleSideNav"
+                    tooltip="{i18n>toggleMenu}"
+                />
+                <Title text="{i18n>appTitle}" level="H4" />
+                <ToolbarSpacer />
+            </tnt:ToolHeader>
+        </tnt:header>
+
+        <!-- ═══ LEFT SIDE NAVIGATION ═══ -->
+        <tnt:sideContent>
+            <tnt:SideNavigation id="sideNav" selectedKey="home">
+                <tnt:NavigationList id="navList">
+                    <tnt:NavigationListItem
+                        text="{i18n>navHome}"
+                        icon="sap-icon://home"
+                        key="home"
+                        select=".onNavSelect"
+                    />
+                    <tnt:NavigationListItem
+                        text="{i18n>navProducts}"
+                        icon="sap-icon://product"
+                        key="products"
+                        select=".onNavSelect"
+                    />
+                    <tnt:NavigationListItem
+                        text="{i18n>navSuppliers}"
+                        icon="sap-icon://supplier"
+                        key="suppliers"
+                        select=".onNavSelect"
+                    />
+                </tnt:NavigationList>
+            </tnt:SideNavigation>
+        </tnt:sideContent>
+
+        <!-- ═══ MAIN CONTENT AREA (Router target) ═══ -->
+        <tnt:mainContents>
+            <NavContainer id="appContent" />
+        </tnt:mainContents>
+
+    </tnt:ToolPage>
+</mvc:View>

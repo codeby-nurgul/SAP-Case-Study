@@ -1,0 +1,136 @@
+{
+    "_version": "1.65.0",
+
+    "sap.app": {
+        "id": "product.management",
+        "type": "application",
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "applicationVersion": {
+            "version": "1.0.0"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/product/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "4.0"
+                }
+            }
+        }
+    },
+
+    "sap.ui": {
+        "technology": "UI5",
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+
+    "sap.ui5": {
+        "dependencies": {
+            "minUI5Version": "1.120.0",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ui.layout": {},
+                "sap.ui.table": {},
+                "sap.ui.unified": {},
+                "sap.tnt": {},
+                "sap.f": {}
+            }
+        },
+
+        "models": {
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true,
+                    "updateGroupId": "batchUpdate",
+                    "groupId": "$auto"
+                }
+            },
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "product.management.i18n.i18n",
+                    "supportedLocales": ["en", "tr"],
+                    "fallbackLocale": "en"
+                }
+            },
+            "appView": {
+                "type": "sap.ui.model.json.JSONModel",
+                "settings": {
+                    "data": {
+                        "sideExpanded": true
+                    }
+                }
+            }
+        },
+
+        "rootView": {
+            "viewName": "product.management.view.App",
+            "type": "XML",
+            "id": "app",
+            "async": true
+        },
+
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "type": "View",
+                "viewType": "XML",
+                "viewPath": "product.management.view",
+                "controlId": "appContent",
+                "controlAggregation": "pages",
+                "async": true,
+                "transition": "slide"
+            },
+            "routes": [
+                {
+                    "name": "home",
+                    "pattern": "",
+                    "target": "home"
+                },
+                {
+                    "name": "products",
+                    "pattern": "products",
+                    "target": "products"
+                },
+                {
+                    "name": "suppliers",
+                    "pattern": "suppliers",
+                    "target": "suppliers"
+                }
+            ],
+            "targets": {
+                "home": {
+                    "viewName": "Home",
+                    "viewId": "homeView",
+                    "viewLevel": 1
+                },
+                "products": {
+                    "viewName": "Products",
+                    "viewId": "productsView",
+                    "viewLevel": 2
+                },
+                "suppliers": {
+                    "viewName": "Suppliers",
+                    "viewId": "suppliersView",
+                    "viewLevel": 2
+                }
+            }
+        },
+
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        }
+    }
+}

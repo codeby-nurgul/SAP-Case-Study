@@ -1,0 +1,115 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    controllerName="product.management.controller.Home"
+>
+    <Page id="homePage" title="{i18n>homeTitle}" showNavButton="false">
+        <content>
+            <VBox class="sapUiMediumMargin" >
+
+                <!-- ═══ WELCOME HEADER ═══ -->
+                <Title text="{i18n>homeWelcome}" level="H2" class="sapUiSmallMarginBottom" />
+                <Text text="{i18n>homeDescription}" class="sapUiSmallMarginBottom" />
+
+                <HBox class="sapUiMediumMarginTop" width="100%">
+
+                    <!-- ═══ LATEST PRODUCTS CARD ═══ -->
+                    <f:Card class="sapUiSmallMarginEnd" width="50%">
+                        <f:header>
+                            <f:cards:Header
+                                xmlns:f.cards="sap.f.cards"
+                                title="{i18n>homeLatestProducts}"
+                                subtitle="{i18n>homeShowingLatest}"
+                                iconSrc="sap-icon://product"
+                            />
+                        </f:header>
+                        <f:content>
+                            <List
+                                id="latestProductsList"
+                                items="{
+                                    path: '/Products',
+                                    parameters: {
+                                        $top: 3,
+                                        $orderby: 'createdAt desc'
+                                    }
+                                }"
+                                noDataText="{i18n>noProducts}"
+                            >
+                                <ObjectListItem
+                                    title="{name}"
+                                    number="{
+                                        path: 'price',
+                                        type: 'sap.ui.model.type.Currency',
+                                        formatOptions: { showMeasure: false }
+                                    }"
+                                    numberUnit="TRY"
+                                >
+                                    <attributes>
+                                        <ObjectAttribute text="{i18n>stock}: {stock}" />
+                                    </attributes>
+                                </ObjectListItem>
+                            </List>
+                            <VBox alignItems="End" class="sapUiSmallMargin">
+                                <Button
+                                    id="viewAllProductsBtn"
+                                    text="{i18n>viewAll}"
+                                    type="Emphasized"
+                                    icon="sap-icon://arrow-right"
+                                    iconFirst="false"
+                                    press=".onNavToProducts"
+                                />
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- ═══ LATEST SUPPLIERS CARD ═══ -->
+                    <f:Card width="50%">
+                        <f:header>
+                            <f:cards:Header
+                                xmlns:f.cards="sap.f.cards"
+                                title="{i18n>homeLatestSuppliers}"
+                                subtitle="{i18n>homeShowingLatest}"
+                                iconSrc="sap-icon://supplier"
+                            />
+                        </f:header>
+                        <f:content>
+                            <List
+                                id="latestSuppliersList"
+                                items="{
+                                    path: '/Suppliers',
+                                    parameters: {
+                                        $top: 3,
+                                        $orderby: 'createdAt desc'
+                                    }
+                                }"
+                                noDataText="{i18n>noSuppliers}"
+                            >
+                                <ObjectListItem
+                                    title="{name}"
+                                    intro="{email}"
+                                >
+                                    <attributes>
+                                        <ObjectAttribute text="{phone}" />
+                                    </attributes>
+                                </ObjectListItem>
+                            </List>
+                            <VBox alignItems="End" class="sapUiSmallMargin">
+                                <Button
+                                    id="viewAllSuppliersBtn"
+                                    text="{i18n>viewAll}"
+                                    type="Emphasized"
+                                    icon="sap-icon://arrow-right"
+                                    iconFirst="false"
+                                    press=".onNavToSuppliers"
+                                />
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                </HBox>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,182 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:t="sap.ui.table"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified"
+    controllerName="product.management.controller.Suppliers"
+>
+    <f:FlexibleColumnLayout id="suppliersFCL" layout="OneColumn">
+
+        <!-- ═══════════════════════════════════════════════
+             BEGIN COLUMN — Master: Supplier Table
+             ═══════════════════════════════════════════════ -->
+        <f:beginColumnPages>
+            <Page id="suppliersListPage" title="{i18n>suppliersTitle}" enableScrolling="false">
+                <content>
+                    <t:Table
+                        id="suppliersTable"
+                        rows="{
+                            path: '/Suppliers',
+                            parameters: {
+                                $count: true
+                            },
+                            sorter: { path: 'createdAt', descending: true }
+                        }"
+                        selectionMode="MultiToggle"
+                        selectionBehavior="RowSelector"
+                        rowSelectionChange=".onRowSelectionChange"
+                        sort=".onSort"
+                        visibleRowCountMode="Auto"
+                        minAutoRowCount="5"
+                        enableSelectAll="true"
+                    >
+                        <!-- ── TOOLBAR ── -->
+                        <t:extension>
+                            <OverflowToolbar>
+                                <ToolbarSpacer />
+                                <SearchField
+                                    id="suppliersSearch"
+                                    width="250px"
+                                    search=".onSearch"
+                                    placeholder="{i18n>searchSuppliers}"
+                                />
+                                <Button
+                                    icon="sap-icon://filter"
+                                    text="{i18n>filter}"
+                                    press=".onOpenFilterDialog"
+                                    type="Transparent"
+                                />
+                                <ToolbarSeparator />
+                                <Button
+                                    icon="sap-icon://add"
+                                    text="{i18n>addSupplier}"
+                                    press=".onAddSupplier"
+                                    type="Emphasized"
+                                />
+                                <Button
+                                    icon="sap-icon://delete"
+                                    text="{i18n>delete}"
+                                    press=".onDeleteSuppliers"
+                                    type="Reject"
+                                />
+                                <Button
+                                    icon="sap-icon://upload"
+                                    text="{i18n>uploadCSV}"
+                                    press=".onOpenCSVDialog"
+                                    type="Transparent"
+                                />
+                                <ToolbarSeparator />
+                                <Button
+                                    icon="sap-icon://save"
+                                    text="{i18n>save}"
+                                    press=".onSaveChanges"
+                                    type="Emphasized"
+                                />
+                                <Button
+                                    icon="sap-icon://sys-cancel-2"
+                                    text="{i18n>cancel}"
+                                    press=".onCancelChanges"
+                                    type="Transparent"
+                                />
+                            </OverflowToolbar>
+                        </t:extension>
+
+                        <!-- ── TABLE COLUMNS ── -->
+                        <t:columns>
+                            <t:Column width="14rem" sortProperty="name" filterProperty="name">
+                                <Label text="{i18n>supplierName}" />
+                                <t:template>
+                                    <Input value="{name}" valueLiveUpdate="true" />
+                                </t:template>
+                            </t:Column>
+
+                            <t:Column width="14rem" sortProperty="email" filterProperty="email">
+                                <Label text="{i18n>supplierEmail}" />
+                                <t:template>
+                                    <Input value="{email}" type="Email" valueLiveUpdate="true" />
+                                </t:template>
+                            </t:Column>
+
+                            <t:Column width="10rem" sortProperty="phone" filterProperty="phone">
+                                <Label text="{i18n>supplierPhone}" />
+                                <t:template>
+                                    <Input value="{phone}" type="Tel" />
+                                </t:template>
+                            </t:Column>
+
+                            <t:Column sortProperty="address" filterProperty="address">
+                                <Label text="{i18n>supplierAddress}" />
+                                <t:template>
+                                    <Input value="{address}" />
+                                </t:template>
+                            </t:Column>
+                        </t:columns>
+                    </t:Table>
+                </content>
+            </Page>
+        </f:beginColumnPages>
+
+        <!-- ═══════════════════════════════════════════════
+             MID COLUMN — Detail: Supplier Info + Products
+             ═══════════════════════════════════════════════ -->
+        <f:midColumnPages>
+            <Page id="supplierDetailPage" title="{i18n>supplierDetail}">
+                <headerContent>
+                    <Button icon="sap-icon://full-screen"  press=".onToggleDetailFullScreen" tooltip="Full Screen" />
+                    <Button icon="sap-icon://decline"      press=".onCloseDetail"            tooltip="{i18n>close}" />
+                </headerContent>
+                <content>
+
+                    <!-- ── Supplier Info Form ── -->
+                    <form:SimpleForm
+                        id="supplierDetailForm"
+                        editable="false"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
+                        class="sapUiMediumMarginTopBottom"
+                    >
+                        <form:title>
+                            <core:Title text="{i18n>supplierDetail}" />
+                        </form:title>
+                        <Label text="{i18n>supplierName}" />
+                        <Text text="{name}" />
+                        <Label text="{i18n>supplierEmail}" />
+                        <Link text="{email}" href="mailto:{email}" />
+                        <Label text="{i18n>supplierPhone}" />
+                        <Text text="{phone}" />
+                        <Label text="{i18n>supplierAddress}" />
+                        <Text text="{address}" />
+                    </form:SimpleForm>
+
+                    <!-- ── Supplier's Products List ── -->
+                    <Panel headerText="{i18n>supplierProducts}" class="sapUiSmallMargin">
+                        <List
+                            id="supplierProductsList"
+                            items="{products}"
+                            noDataText="{i18n>noProducts}"
+                        >
+                            <ObjectListItem
+                                title="{name}"
+                                number="{
+                                    path: 'price',
+                                    type: 'sap.ui.model.type.Currency',
+                                    formatOptions: { showMeasure: false }
+                                }"
+                                numberUnit="TRY"
+                            >
+                                <attributes>
+                                    <ObjectAttribute text="{i18n>stock}: {stock}" />
+                                </attributes>
+                            </ObjectListItem>
+                        </List>
+                    </Panel>
+
+                </content>
+            </Page>
+        </f:midColumnPages>
+
+    </f:FlexibleColumnLayout>
+</mvc:View>

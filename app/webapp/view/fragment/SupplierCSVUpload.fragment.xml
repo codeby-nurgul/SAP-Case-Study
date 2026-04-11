@@ -1,0 +1,58 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified"
+>
+    <Dialog
+        title="{i18n>csvUploadSuppliers}"
+        contentWidth="500px"
+        resizable="true"
+    >
+        <content>
+            <VBox class="sapUiSmallMargin">
+
+                <!-- File Picker -->
+                <u:FileUploader
+                    id="supplierCSVUploader"
+                    fileType="csv"
+                    placeholder="{i18n>csvSelectFile}"
+                    buttonText="{i18n>csvSelectFile}"
+                    change=".onCSVFileChange"
+                    style="Emphasized"
+                    width="100%"
+                />
+
+                <!-- Result Message Strip (hidden by default) -->
+                <MessageStrip
+                    id="supplierCSVMessage"
+                    visible="false"
+                    showCloseButton="true"
+                    class="sapUiSmallMarginTop"
+                />
+
+                <!-- CSV Format Hint -->
+                <MessageStrip
+                    text="CSV format: name, email, phone, address (with header row)"
+                    type="Information"
+                    showCloseButton="false"
+                    class="sapUiSmallMarginTop"
+                />
+
+            </VBox>
+        </content>
+        <beginButton>
+            <Button
+                text="{i18n>uploadCSV}"
+                type="Emphasized"
+                icon="sap-icon://upload"
+                press=".onExecuteSupplierCSVUpload"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="{i18n>close}"
+                press=".onCloseCSVDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

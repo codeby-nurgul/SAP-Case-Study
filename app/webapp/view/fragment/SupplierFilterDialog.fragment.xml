@@ -1,0 +1,103 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        title="{i18n>filterTitle}"
+        contentWidth="700px"
+        resizable="true"
+    >
+        <content>
+            <VBox class="sapUiSmallMargin">
+
+                <!-- ── Logic Selector: AND / OR ── -->
+                <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+                    <Label text="{i18n>filterLogic}" class="sapUiSmallMarginEnd" />
+                    <RadioButtonGroup
+                        id="supplierFilterLogicGroup"
+                        selectedIndex="{filterModel>/logicIndex}"
+                        columns="2"
+                    >
+                        <RadioButton text="{i18n>filterAnd}" />
+                        <RadioButton text="{i18n>filterOr}" />
+                    </RadioButtonGroup>
+                </HBox>
+
+                <!-- ── Dynamic Filter Condition Rows ── -->
+                <VBox items="{filterModel>/conditions}">
+                    <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+
+                        <!-- Field selector (supplier-specific fields) -->
+                        <Select
+                            selectedKey="{filterModel>field}"
+                            width="150px"
+                            class="sapUiTinyMarginEnd"
+                        >
+                            <core:Item key="name"    text="{i18n>supplierName}" />
+                            <core:Item key="email"   text="{i18n>supplierEmail}" />
+                            <core:Item key="phone"   text="{i18n>supplierPhone}" />
+                            <core:Item key="address" text="{i18n>supplierAddress}" />
+                        </Select>
+
+                        <!-- Operator selector -->
+                        <Select
+                            selectedKey="{filterModel>operator}"
+                            width="150px"
+                            class="sapUiTinyMarginEnd"
+                        >
+                            <core:Item key="Contains" text="{i18n>contains}" />
+                            <core:Item key="EQ"       text="{i18n>equals}" />
+                            <core:Item key="GT"       text="{i18n>greaterThan}" />
+                            <core:Item key="LT"       text="{i18n>lessThan}" />
+                        </Select>
+
+                        <!-- Value input -->
+                        <Input
+                            value="{filterModel>value}"
+                            placeholder="{i18n>filterValue}"
+                            width="200px"
+                            class="sapUiTinyMarginEnd"
+                        />
+
+                        <!-- Remove condition -->
+                        <Button
+                            icon="sap-icon://decline"
+                            type="Transparent"
+                            press=".onRemoveFilterCondition"
+                        />
+                    </HBox>
+                </VBox>
+
+                <!-- ── Add Condition + Clear ── -->
+                <HBox class="sapUiSmallMarginTop">
+                    <Button
+                        icon="sap-icon://add"
+                        text="{i18n>addFilter}"
+                        press=".onAddFilterCondition"
+                        type="Transparent"
+                    />
+                    <ToolbarSpacer />
+                    <Button
+                        text="{i18n>clearFilters}"
+                        press=".onClearFilters"
+                        type="Transparent"
+                    />
+                </HBox>
+
+            </VBox>
+        </content>
+        <beginButton>
+            <Button
+                text="{i18n>applyFilter}"
+                type="Emphasized"
+                press=".onApplyFilters"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="{i18n>close}"
+                press=".onCloseFilterDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
