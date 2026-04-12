@@ -6,7 +6,7 @@ sap.ui.define([
     return BaseController.extend("product.management.controller.Home", {
 
         onInit: function () {
-            // Home page init — data loads automatically via OData list binding
+            // Home page init — data loads automatically via OData list binding in the view
         },
 
         /**

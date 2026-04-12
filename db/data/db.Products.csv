@@ -1,0 +1,9 @@
+ID,name,description,price,stock,supplier_ID
+f1a2b3c4-d5e6-7890-1234-abcdef123456,Laptop Pro 15,High performance laptop,1299.99,5,d1b2c3a4-e5f6-7890-abcd-ef1234567890
+f2b3c4d5-e6f7-8901-2345-bcdef1234567,USB-C Hub,7-in-1 USB-C adapter,45.00,150,e5f6a7b8-c9d0-1234-ef01-345678901234
+f3c4d5e6-f7a8-9012-3456-cdef12345678,Wireless Mouse,Ergonomic wireless mouse,29.90,200,c4d5e6f7-b8a9-0123-def0-234567890123
+f4d5e6f7-a8b9-0123-4567-def123456789,Mechanical Keyboard,RGB mechanical keyboard,89.99,75,
+f5e6f7a8-b9c0-1234-5678-ef1234567890,Monitor 27 inch,4K IPS display,349.00,30,
+f6f7a8b9-c0d1-2345-6789-f12345678901,USB-C Hub,7-in-1 USB-C hub with HDMI output,59.99,150,
+f7a8b9c0-d1e2-3456-7890-123456789012,Mechanical Keyboard,Cherry MX Blue switches RGB keyboard,89.99,75,
+f8b9c0d1-e2f3-4567-8901-234567890123,Webcam HD,1080p webcam with built-in microphone,39.99,120,

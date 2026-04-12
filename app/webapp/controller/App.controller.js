@@ -7,8 +7,29 @@ sap.ui.define([
     return BaseController.extend("product.management.controller.App", {
 
         onInit: function () {
+            // Initialize theme from localStorage
+            var sSavedTheme = localStorage.getItem("appTheme") || "sap_horizon";
+            sap.ui.getCore().applyTheme(sSavedTheme);
+            
+            // Set theme state in appView model
+            var oAppViewModel = this.getOwnerComponent().getModel("appView");
+            oAppViewModel.setProperty("/isDarkMode", sSavedTheme === "sap_horizon_dark");
+
             // Listen to route changes to sync the side navigation selected key
             this.getRouter().attachRouteMatched(this._onRouteMatched, this);
+        },
+
+        /**
+         * Toggle between light and dark themes
+         */
+        onThemeToggle: function () {
+            var oAppViewModel = this.getModel("appView");
+            var bIsDarkMode = oAppViewModel.getProperty("/isDarkMode");
+            var sNewTheme = bIsDarkMode ? "sap_horizon" : "sap_horizon_dark";
+            
+            sap.ui.getCore().applyTheme(sNewTheme);
+            oAppViewModel.setProperty("/isDarkMode", !bIsDarkMode);
+            localStorage.setItem("appTheme", sNewTheme);
         },
 
         /**

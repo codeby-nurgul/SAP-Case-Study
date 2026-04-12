@@ -159,8 +159,8 @@
 
                     <!-- Sticky Save/Cancel Buttons -->
                     <HBox class="stickyBottomBtn">
-                        <Button text="Save" icon="sap-icon://save" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" height="40px" />
-                        <Button text="Cancel" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" height="40px" />
+                        <Button text="Save" icon="sap-icon://save" type="Emphasized" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" />
+                        <Button text="Cancel" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" />
                     </HBox>
                 </content>
             </Page>

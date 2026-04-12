@@ -19,6 +19,14 @@
                 />
                 <Title text="{i18n>appTitle}" level="H4" />
                 <ToolbarSpacer />
+                <Button
+                    id="themeToggleBtn"
+                    text="{= ${appView>/isDarkMode} ? 'Light Mode' : 'Dark Mode' }"
+                    icon="{= ${appView>/isDarkMode} ? 'sap-icon://light-mode' : 'sap-icon://dark-mode' }"
+                    type="Transparent"
+                    press=".onThemeToggle"
+                    tooltip="Tema Değiştir"
+                />
             </tnt:ToolHeader>
         </tnt:header>
 

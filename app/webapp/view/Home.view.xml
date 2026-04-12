@@ -1,7 +1,7 @@
 <mvc:View
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
     xmlns:grid="sap.ui.layout.cssgrid"
     controllerName="product.management.controller.Home"
 >
@@ -11,7 +11,6 @@
                 <!-- ═══ HERO SECTION ═══ -->
                 <VBox class="heroSection" alignItems="Center">
                     <core:Icon
-                        xmlns:core="sap.ui.core"
                         src="sap-icon://shelf"
                         size="3rem"
                         color="#0070F2"
@@ -24,26 +23,31 @@
                 <!-- ═══ DASHBOARD GRID ═══ -->
                 <HBox justifyContent="Center" class="sapUiMediumMargin">
                     <VBox width="100%" maxWidth="1200px">
-                        
+
                         <grid:CSSGrid gridTemplateColumns="repeat(auto-fit, minmax(400px, 1fr))" gridGap="1.5rem">
-                            
+
                             <!-- Card 1: Recently Added Products -->
-                            <f:Card class="dashboardCard">
-                                <f:header>
-                                    <cards:Header
-                                        xmlns:cards="sap.f.cards"
-                                        title="{i18n>homeLatestProducts}"
-                                        subtitle="{i18n>homeShowingLatest}"
-                                        statusText="{i18n>viewAll}"
-                                        press=".onNavToProducts"
-                                    />
-                                </f:header>
-                                <f:content>
+                            <Panel class="dashboardCard">
+                                <headerToolbar>
+                                    <Toolbar>
+                                        <Title text="{i18n>homeLatestProducts}" level="H4" />
+                                        <ToolbarSpacer />
+                                        <Link text="{i18n>viewAll}" press=".onNavToProducts" class="sapUiTinyMarginEnd" />
+                                    </Toolbar>
+                                </headerToolbar>
+                                <content>
                                     <List
+                                        id="homeProductsList"
                                         items="{
                                             path: '/Products',
-                                            parameters: { $top: 3, $orderby: 'createdAt desc' }
+                                            parameters: {
+                                                $expand: 'supplier'
+                                            },
+                                            sorter: { path: 'createdAt', descending: true }
                                         }"
+                                        growing="true"
+                                        growingThreshold="3"
+                                        growingScrollToLoad="false"
                                         noDataText="{i18n>noProducts}"
                                         showSeparators="Inner"
                                     >
@@ -53,40 +57,41 @@
                                                     <Text text="{name}" class="cardTitle" />
                                                     <Text text="{description}" class="sapUiTinyMarginTop sapUiSmallMarginBottom heroSubtitle" maxLines="1" />
                                                     <HBox alignItems="Center">
-                                                        <!-- Stock Badge Logic using CSS -->
-                                                        <Text 
-                                                            text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }" 
+                                                        <!-- Stock Badge -->
+                                                        <Text
+                                                            text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }"
                                                             class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
                                                         <Text text=" • {supplier/name}" class="heroSubtitle sapUiSmallMarginBegin" visible="{= !!${supplier/name} }" />
                                                     </HBox>
                                                 </VBox>
                                                 <VBox alignItems="End">
                                                     <Title text="{price}" level="H3" class="heroTitle" />
-                                                    <Text text="TRY" class="heroSubtitle" />
                                                 </VBox>
                                             </HBox>
                                         </CustomListItem>
                                     </List>
-                                </f:content>
-                            </f:Card>
+                                </content>
+                            </Panel>
 
                             <!-- Card 2: Recently Added Suppliers -->
-                            <f:Card class="dashboardCard">
-                                <f:header>
-                                    <cards:Header
-                                        xmlns:cards="sap.f.cards"
-                                        title="{i18n>homeLatestSuppliers}"
-                                        subtitle="{i18n>homeShowingLatest}"
-                                        statusText="{i18n>viewAll}"
-                                        press=".onNavToSuppliers"
-                                    />
-                                </f:header>
-                                <f:content>
+                            <Panel class="dashboardCard">
+                                <headerToolbar>
+                                    <Toolbar>
+                                        <Title text="{i18n>homeLatestSuppliers}" level="H4" />
+                                        <ToolbarSpacer />
+                                        <Link text="{i18n>viewAll}" press=".onNavToSuppliers" class="sapUiTinyMarginEnd" />
+                                    </Toolbar>
+                                </headerToolbar>
+                                <content>
                                     <List
+                                        id="homeSuppliersList"
                                         items="{
                                             path: '/Suppliers',
-                                            parameters: { $top: 3, $orderby: 'createdAt desc' }
+                                            sorter: { path: 'createdAt', descending: true }
                                         }"
+                                        growing="true"
+                                        growingThreshold="3"
+                                        growingScrollToLoad="false"
                                         noDataText="{i18n>noSuppliers}"
                                         showSeparators="Inner"
                                     >
@@ -95,18 +100,18 @@
                                                 <Text text="{address}" class="heroSubtitle" />
                                                 <Text text="{name}" class="cardTitle sapUiTinyMarginTop" />
                                                 <HBox class="sapUiSmallMarginTop">
-                                                    <core:Icon xmlns:core="sap.ui.core" src="sap-icon://email" size="0.8rem" class="sapUiTinyMarginEnd" color="#556B82" />
+                                                    <core:Icon src="sap-icon://email" size="0.8rem" class="sapUiTinyMarginEnd" color="#556B82" />
                                                     <Text text="{email}" class="heroSubtitle" />
                                                 </HBox>
                                                 <HBox class="sapUiTinyMarginTop">
-                                                    <core:Icon xmlns:core="sap.ui.core" src="sap-icon://phone" size="0.8rem" class="sapUiTinyMarginEnd" color="#556B82" />
+                                                    <core:Icon src="sap-icon://phone" size="0.8rem" class="sapUiTinyMarginEnd" color="#556B82" />
                                                     <Text text="{phone}" class="heroSubtitle" />
                                                 </HBox>
                                             </VBox>
                                         </CustomListItem>
                                     </List>
-                                </f:content>
-                            </f:Card>
+                                </content>
+                            </Panel>
 
                         </grid:CSSGrid>
                     </VBox>

@@ -15,6 +15,18 @@
     --sapCardShadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
+/* Dark Mode Overrides */
+html.sap-desktop .sapUiTheme-sap_horizon_dark, 
+.sapUiTheme-sap_horizon_dark {
+    --sapPrimaryBlue: #4b9bfa;
+    --sapActiveNavBg: #1a2430;
+    --sapTextPrimary: #f5f6f7;
+    --sapTextSecondary: #b1b9c2;
+    --sapBorder: #293846;
+    --sapBackground: #12171c;
+    --sapCardShadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
 /* ── Typography Override ── */
 body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     font-family: "72", "72full", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -22,7 +34,6 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 
 /* ── Layout & Sidebar ── */
 .sidebarNav {
-    width: 230px !important;
     background-color: var(--sapBackground) !important;
     border-right: 1px solid var(--sapBorder) !important;
 }
@@ -39,6 +50,10 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 .sidebarNav .sapTntNavIItemActive .sapUiIcon,
 .sidebarNav .sapTntNavIItemSelected .sapUiIcon {
     color: var(--sapPrimaryBlue) !important;
+}
+
+.sidebarNav .sapTntNavIItem:hover {
+    background-color: #f7f9fc !important;
 }
 
 /* ── Header ── */
@@ -77,6 +92,12 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     border-radius: 8px !important;
     box-shadow: var(--sapCardShadow) !important;
     border: none !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.dashboardCard:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+    transform: translateY(-4px) !important;
 }
 
 .cardTitle {
@@ -97,12 +118,47 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     color: var(--sapPrimaryBlue) !important;
 }
 
-.blueTable .sapUiTableTr {
-    height: 52px !important;
+.blueTable table {
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+    width: max-content !important; /* Hücrelerin kendi genişliğini korumasına izin ver */
+    min-width: 100% !important;
 }
 
-.blueTable .sapUiTableTr:hover {
-    background-color: #F5F9FF !important;
+/* Tablonun kendisi ekrana %100 sabitlensin, ekran dışına taşmasın */
+.blueTable {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: hidden !important; 
+}
+
+/* Sadece tablonun veri satırları ve sütun başlıkları sağa/sola kaysın (Toolbar sabit kalır) */
+.blueTable .sapUiTableCtrlScr {
+    overflow-x: auto !important; 
+    overflow-y: hidden !important;
+}
+
+/* Yüksekliği içeriğe uydurma */
+.blueTable .sapUiTableCCnt {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: max-content !important;
+}
+
+.blueTable .sapUiTableTr {
+    height: 52px !important;
+    transition: background-color 0.3s ease !important;
+}
+
+.blueTable .sapUiTableTr:hover, 
+.blueTable .sapUiTableTr:hover > td {
+    background-color: #EBF4FF !important;
+    cursor: pointer;
+}
+
+/* Boş satırları tamamen gizle */
+.blueTable .sapUiTableEmptyRow {
+    display: none !important;
 }
 
 /* Edit Mode Accent */
@@ -111,9 +167,22 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     background-color: #FAFBFD !important;
 }
 
-.editInput {
-    border: 1px solid var(--sapPrimaryBlue) !important;
-    border-radius: 4px !important;
+/* Tüm hücrelerin içindeki input ve select bileşenlerini sıfırla */
+.blueTable .sapUiTableTr > td .sapMInputBaseContentWrapper,
+.blueTable .sapUiTableTr > td .sapMSelect,
+.blueTable .sapUiTableTr > td .sapMInputBaseInner,
+.blueTable .sapUiTableTr > td input,
+.blueTable .sapUiTableTr > td select {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+}
+
+.editInput.sapMInputBaseHasFocus .sapMInputBaseContentWrapper,
+.editInput.sapMSelectFocused {
+    border-bottom: 2px solid var(--sapPrimaryBlue) !important;
 }
 
 /* ── Badges ── */
@@ -134,23 +203,79 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 }
 
 /* ── Buttons ── */
-.btnPrimary {
+.btnPrimary .sapMBtnInner {
     background-color: var(--sapPrimaryBlue) !important;
-    border: 1px solid var(--sapPrimaryBlue) !important;
+    border: none !important;
+    box-shadow: 0 4px 8px rgba(0, 112, 242, 0.15) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.btnPrimary .sapMBtnContent {
+.btnPrimary:hover .sapMBtnInner {
+    box-shadow: 0 6px 15px rgba(0, 112, 242, 0.3) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    filter: brightness(1.1) !important;
+}
+
+.btnPrimary .sapMBtnContent, 
+.btnPrimary .sapUiIcon {
     color: white !important;
+    font-weight: 600 !important;
 }
 
-.btnOutline {
+.btnOutline .sapMBtnInner {
     border: 1px solid var(--sapBorder) !important;
-    background-color: transparent !important;
+    background-color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.btnReject {
+.btnOutline:hover .sapMBtnInner {
+    border-color: var(--sapPrimaryBlue) !important;
+    background-color: var(--sapActiveNavBg) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 10px rgba(0, 112, 242, 0.1) !important;
+}
+
+.btnOutline:hover .sapMBtnContent,
+.btnOutline:hover .sapUiIcon {
+    color: var(--sapPrimaryBlue) !important;
+}
+
+.btnReject .sapMBtnInner {
     border: 1px solid var(--sapErrorRed) !important;
     color: var(--sapErrorRed) !important;
+    background-color: white !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btnReject:hover .sapMBtnInner {
+    background-color: var(--sapErrorRed) !important;
+    box-shadow: 0 4px 12px rgba(187, 0, 0, 0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+.btnReject:hover .sapMBtnContent,
+.btnReject:hover .sapUiIcon {
+    color: white !important;
+    border-color: var(--sapErrorRed) !important;
+}
+
+/* Remove default UI5 focus outline that causes the blue 'box' effect */
+.btnPrimary.sapMBtnFocus .sapMBtnInner:before,
+.btnOutline.sapMBtnFocus .sapMBtnInner:before,
+.btnReject.sapMBtnFocus .sapMBtnInner:before {
+    outline: none !important;
+    border: none !important;
+}
+
+/* ── Generic Interactive Improvements ── */
+.sapMBtn:hover .sapUiIcon {
+    transform: scale(1.1) !important;
+    transition: transform 0.2s ease !important;
+}
+
+.sapMBtnTransparent:hover {
+    background-color: rgba(0, 112, 242, 0.05) !important;
 }
 
 /* ── CSV Dialog ── */
