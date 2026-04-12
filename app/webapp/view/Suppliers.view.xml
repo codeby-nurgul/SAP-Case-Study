@@ -10,9 +10,7 @@
 >
     <f:FlexibleColumnLayout id="suppliersFCL" layout="OneColumn">
 
-        <!-- ═══════════════════════════════════════════════
-             BEGIN COLUMN — Master: Supplier Table
-             ═══════════════════════════════════════════════ -->
+        <!-- Master: Supplier Table -->
         <f:beginColumnPages>
             <Page id="suppliersListPage" showHeader="false" enableScrolling="false">
                 <content>
@@ -42,11 +40,11 @@
                             selectionBehavior="RowSelector"
                             rowSelectionChange=".onRowSelectionChange"
                             sort=".onSort"
-                            visibleRowCountMode="Fixed"
-                            visibleRowCount="12"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="5"
                             enableSelectAll="true"
                         >
-                            <!-- ── TOOLBAR ── -->
+                            <!-- ── OVERFLOW TOOLBAR (BUG 2) ── -->
                             <t:extension>
                                 <OverflowToolbar style="Clear">
                                     <Title text="Suppliers ({$count})" level="H2" class="cardTitle" />
@@ -56,37 +54,56 @@
                                         width="300px"
                                         search=".onSearch"
                                         placeholder="{i18n>searchSuppliers}"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="High" />
+                                        </layoutData>
+                                    </SearchField>
                                     <Button
                                         icon="sap-icon://filter"
                                         press=".onOpenFilterDialog"
                                         type="Transparent"
                                         tooltip="{i18n>filter}"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="Low" />
+                                        </layoutData>
+                                    </Button>
                                     <Button
                                         text="Create"
                                         icon="sap-icon://add"
                                         press=".onAddSupplier"
                                         class="btnPrimary"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="NeverOverflow" />
+                                        </layoutData>
+                                    </Button>
                                     <Button
                                         text="CSV Upload"
                                         icon="sap-icon://upload"
                                         press=".onOpenCSVDialog"
                                         class="btnOutline"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="Low" />
+                                        </layoutData>
+                                    </Button>
                                     <Button
                                         text="Delete"
                                         icon="sap-icon://delete"
                                         press=".onDeleteSuppliers"
                                         class="btnReject"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="AlwaysOverflow" />
+                                        </layoutData>
+                                    </Button>
                                 </OverflowToolbar>
                             </t:extension>
 
                             <!-- ── TABLE COLUMNS ── -->
                             <t:columns>
-                                <!-- Name -->
                                 <t:Column width="15rem" sortProperty="name" filterProperty="name">
                                     <Label text="Name" />
                                     <t:template>
@@ -94,7 +111,6 @@
                                     </t:template>
                                 </t:Column>
 
-                                <!-- Email -->
                                 <t:Column width="15rem" sortProperty="email">
                                     <Label text="Email" />
                                     <t:template>
@@ -102,7 +118,6 @@
                                     </t:template>
                                 </t:Column>
 
-                                <!-- Phone -->
                                 <t:Column width="12rem" sortProperty="phone">
                                     <Label text="Phone" />
                                     <t:template>
@@ -110,7 +125,6 @@
                                     </t:template>
                                 </t:Column>
 
-                                <!-- Address/City/Country -->
                                 <t:Column sortProperty="address">
                                     <Label text="Location / Address" />
                                     <t:template>
@@ -118,7 +132,6 @@
                                     </t:template>
                                 </t:Column>
 
-                                <!-- Actions -->
                                 <t:Column width="8rem" hAlign="Center">
                                     <Label text="Actions" />
                                     <t:template>
@@ -141,9 +154,7 @@
             </Page>
         </f:beginColumnPages>
 
-        <!-- ═══════════════════════════════════════════════
-             MID COLUMN — Detail: Supplier Info
-             ═══════════════════════════════════════════════ -->
+        <!-- Detail: Supplier Info -->
         <f:midColumnPages>
             <Page id="supplierDetailPage" title="{i18n>supplierDetail}">
                 <headerContent>

@@ -44,10 +44,10 @@
                             rowSelectionChange=".onRowSelectionChange"
                             sort=".onSort"
                             visibleRowCountMode="Auto"
-                            minAutoRowCount="10"
+                            minAutoRowCount="8"
                             enableSelectAll="true"
                         >
-                            <!-- ── TOOLBAR ── -->
+                            <!-- ── OVERFLOW TOOLBAR (Fixed responsive buttons) ── -->
                             <t:extension>
                                 <OverflowToolbar style="Clear">
                                     <Title text="Products ({$count})" level="H2" class="cardTitle" />
@@ -57,31 +57,51 @@
                                         width="300px"
                                         search=".onSearch"
                                         placeholder="{i18n>searchProducts}"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="High" />
+                                        </layoutData>
+                                    </SearchField>
                                     <Button
                                         icon="sap-icon://filter"
                                         press=".onOpenFilterDialog"
                                         type="Transparent"
                                         tooltip="{i18n>filter}"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="Low" />
+                                        </layoutData>
+                                    </Button>
                                     <Button
                                         text="Create"
                                         icon="sap-icon://add"
                                         press=".onAddProduct"
                                         class="btnPrimary"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="NeverOverflow" />
+                                        </layoutData>
+                                    </Button>
                                     <Button
                                         text="CSV Upload"
                                         icon="sap-icon://upload"
                                         press=".onOpenCSVDialog"
                                         class="btnOutline"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="Low" />
+                                        </layoutData>
+                                    </Button>
                                     <Button
                                         text="Delete"
                                         icon="sap-icon://delete"
                                         press=".onDeleteProducts"
                                         class="btnReject"
-                                    />
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="AlwaysOverflow" />
+                                        </layoutData>
+                                    </Button>
                                 </OverflowToolbar>
                             </t:extension>
 
@@ -96,7 +116,7 @@
                                 </t:Column>
 
                                 <!-- Description -->
-                                <t:Column width="20rem" sortProperty="description">
+                                <t:Column width="12rem" sortProperty="description">
                                     <Label text="Description" />
                                     <t:template>
                                         <Input value="{description}" class="editInput" />
@@ -104,14 +124,14 @@
                                 </t:Column>
 
                                 <!-- Price -->
-                                <t:Column width="8rem" hAlign="End" sortProperty="price">
+                                <t:Column width="6rem" hAlign="End" sortProperty="price">
                                     <Label text="Price" />
                                     <t:template>
                                         <Input value="{price}" type="Number" textAlign="End" class="editInput" />
                                     </t:template>
                                 </t:Column>
 
-                                <!-- Currency (Static for now as per ref) -->
+                                <!-- Currency -->
                                 <t:Column width="6rem">
                                     <Label text="Currency" />
                                     <t:template>
@@ -128,7 +148,7 @@
                                 </t:Column>
 
                                 <!-- Supplier -->
-                                <t:Column width="14rem">
+                                <t:Column width="11rem">
                                     <Label text="Supplier" />
                                     <t:template>
                                         <Select

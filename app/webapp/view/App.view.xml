@@ -5,6 +5,7 @@
     controllerName="product.management.controller.App"
     displayBlock="true"
 >
+    <!-- sideExpanded="true" ensures labels are visible by default -->
     <tnt:ToolPage id="toolPage" sideExpanded="{appView>/sideExpanded}">
 
         <!-- ═══ TOP HEADER BAR ═══ -->

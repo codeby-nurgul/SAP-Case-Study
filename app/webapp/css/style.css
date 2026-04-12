@@ -120,29 +120,35 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 
 .blueTable table {
     border-collapse: collapse !important;
-    table-layout: fixed !important;
-    width: max-content !important; /* Hücrelerin kendi genişliğini korumasına izin ver */
-    min-width: 100% !important;
 }
 
-/* Tablonun kendisi ekrana %100 sabitlensin, ekran dışına taşmasın */
+/* Tablonun kendisi ekrana %100 sabitlensin, kart görünümü kazansın */
 .blueTable {
     width: 100% !important;
     max-width: 100vw !important;
-    overflow: hidden !important; 
+    overflow: hidden !important;
+    border: 1px solid var(--sapBorder) !important;
+    border-radius: 12px !important;
+    background-color: var(--sapBackground) !important;
+    box-shadow: var(--sapCardShadow) !important;
+    margin-top: 1rem !important;
 }
 
-/* Sadece tablonun veri satırları ve sütun başlıkları sağa/sola kaysın (Toolbar sabit kalır) */
-.blueTable .sapUiTableCtrlScr {
-    overflow-x: auto !important; 
-    overflow-y: hidden !important;
+/* Tablo içindeki ekstra sınırları temizle (Dış sınır artık .blueTable'da) */
+.blueTable .sapUiTableHdr,
+.blueTable .sapUiTableHdrScr {
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.blueTable .sapUiTableHdr {
+    border-top: none !important;
 }
 
 /* Yüksekliği içeriğe uydurma */
 .blueTable .sapUiTableCCnt {
     height: auto !important;
     min-height: auto !important;
-    max-height: max-content !important;
 }
 
 .blueTable .sapUiTableTr {
