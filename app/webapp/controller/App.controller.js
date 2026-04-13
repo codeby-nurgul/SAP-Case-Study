@@ -14,6 +14,7 @@ sap.ui.define([
             // Set theme state in appView model
             var oAppViewModel = this.getOwnerComponent().getModel("appView");
             oAppViewModel.setProperty("/isDarkMode", sSavedTheme === "sap_horizon_dark");
+            oAppViewModel.setProperty("/layout", "OneColumn");
 
             // Listen to route changes to sync the side navigation selected key
             this.getRouter().attachRouteMatched(this._onRouteMatched, this);

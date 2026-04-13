@@ -12,6 +12,7 @@ entity Products : cuid, managed {
     description : String(500);
     price       : Decimal(10,2);
     stock       : Integer default 0;
+    currency    : String(3) default 'TRY';
     supplier    : Association to Suppliers;
 }
 

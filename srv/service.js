@@ -107,7 +107,7 @@ module.exports = class ProductService extends cds.ApplicationService {
 
         // Define expected columns per entity type
         const columnMap = {
-            product:  { name: 'name', description: 'description', price: 'price', stock: 'stock' },
+            product:  { name: 'name', description: 'description', price: 'price', stock: 'stock', currency: 'currency' },
             supplier: { name: 'name', email: 'email', phone: 'phone', address: 'address' }
         };
 
@@ -161,6 +161,9 @@ module.exports = class ProductService extends cds.ApplicationService {
                     }
                 } else {
                     entry.stock = 0;
+                }
+                if (!entry.currency || entry.currency === '') {
+                    entry.currency = 'TRY';
                 }
             }
 

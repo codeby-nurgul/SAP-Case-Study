@@ -285,6 +285,40 @@ sap.ui.define([
          * ═══════════════════════════════════════════════ */
 
         /**
+         * Action icon (Grid) press -> select row and open detail
+         */
+        onOpenDetail: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext();
+            this._showDetail(oContext);
+            
+            // Sync selection in table
+            var oTable = this.byId("suppliersTable");
+            var aContexts = oTable.getBinding("rows").getContexts();
+            var iIndex = aContexts.indexOf(oContext);
+            if (iIndex !== -1) {
+                oTable.setSelectedIndex(iIndex);
+            }
+        },
+
+        /**
+         * Action icon (Pencil) press -> select row and open detail with toast
+         */
+        onEditRow: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext();
+            this._showDetail(oContext);
+            
+            // Sync selection in table
+            var oTable = this.byId("suppliersTable");
+            var aContexts = oTable.getBinding("rows").getContexts();
+            var iIndex = aContexts.indexOf(oContext);
+            if (iIndex !== -1) {
+                oTable.setSelectedIndex(iIndex);
+            }
+            
+            MessageToast.show(this.getResourceBundle().getText("editModeActive") || "Edit mode active");
+        },
+
+        /**
          * Row selected → show supplier detail + products in mid column.
          * Binds with $expand=products to load related products.
          */
@@ -314,7 +348,9 @@ sap.ui.define([
                 }
             });
 
-            this.byId("suppliersFCL").setLayout("TwoColumnsMidExpanded");
+            var sLayout = "TwoColumnsMidExpanded";
+            this.byId("suppliersFCL").setLayout(sLayout);
+            this.getModel("appView").setProperty("/layout", sLayout);
         },
 
         onCloseDetail: function () {
@@ -322,18 +358,21 @@ sap.ui.define([
         },
 
         _closeDetail: function () {
-            this.byId("suppliersFCL").setLayout("OneColumn");
+            var sLayout = "OneColumn";
+            this.byId("suppliersFCL").setLayout(sLayout);
+            this.getModel("appView").setProperty("/layout", sLayout);
             this.byId("suppliersTable").clearSelection();
         },
 
         onToggleDetailFullScreen: function () {
             var oFCL = this.byId("suppliersFCL");
             var sLayout = oFCL.getLayout();
-            oFCL.setLayout(
-                sLayout === "MidColumnFullScreen"
+            var sNewLayout = sLayout === "MidColumnFullScreen"
                     ? "TwoColumnsMidExpanded"
-                    : "MidColumnFullScreen"
-            );
+                    : "MidColumnFullScreen";
+            
+            oFCL.setLayout(sNewLayout);
+            this.getModel("appView").setProperty("/layout", sNewLayout);
         },
 
         /* ═══════════════════════════════════════════════

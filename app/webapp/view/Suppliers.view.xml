@@ -8,7 +8,7 @@
     xmlns:u="sap.ui.unified"
     controllerName="product.management.controller.Suppliers"
 >
-    <f:FlexibleColumnLayout id="suppliersFCL" layout="OneColumn">
+    <f:FlexibleColumnLayout id="suppliersFCL" layout="{appView>/layout}">
 
         <!-- Master: Supplier Table -->
         <f:beginColumnPages>
@@ -44,7 +44,7 @@
                             minAutoRowCount="5"
                             enableSelectAll="true"
                         >
-                            <!-- ── OVERFLOW TOOLBAR (BUG 2) ── -->
+                            <!-- ── OVERFLOW TOOLBAR ── -->
                             <t:extension>
                                 <OverflowToolbar style="Clear">
                                     <Title text="Suppliers ({$count})" level="H2" class="cardTitle" />
@@ -89,59 +89,61 @@
                                             <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>
                                     </Button>
+                                    <!-- FIX: AlwaysOverflow → Low
+                                         Geniş ekranda (OneColumn) görünür,
+                                         TwoColumns layout'ta toolbar daraldığında overflow menüye gider -->
                                     <Button
+                                        id="deleteSuppliersBtn"
                                         text="Delete"
                                         icon="sap-icon://delete"
                                         press=".onDeleteSuppliers"
                                         class="btnReject"
                                     >
                                         <layoutData>
-                                            <OverflowToolbarLayoutData priority="AlwaysOverflow" />
+                                            <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>
                                     </Button>
                                 </OverflowToolbar>
                             </t:extension>
 
                             <!-- ── TABLE COLUMNS ── -->
-                            <t:columns>
-                                <t:Column width="15rem" sortProperty="name" filterProperty="name">
-                                    <Label text="Name" />
-                                    <t:template>
-                                        <Input value="{name}" valueLiveUpdate="true" class="editInput" />
-                                    </t:template>
-                                </t:Column>
+                            <t:Column width="15rem" sortProperty="name" filterProperty="name">
+                                <Label text="Name" />
+                                <t:template>
+                                    <Input value="{name}" valueLiveUpdate="true" class="editInput" />
+                                </t:template>
+                            </t:Column>
 
-                                <t:Column width="15rem" sortProperty="email">
-                                    <Label text="Email" />
-                                    <t:template>
-                                        <Input value="{email}" type="Email" class="editInput" />
-                                    </t:template>
-                                </t:Column>
+                            <t:Column width="15rem" sortProperty="email">
+                                <Label text="Email" />
+                                <t:template>
+                                    <Input value="{email}" type="Email" class="editInput" />
+                                </t:template>
+                            </t:Column>
 
-                                <t:Column width="12rem" sortProperty="phone">
-                                    <Label text="Phone" />
-                                    <t:template>
-                                        <Input value="{phone}" type="Tel" class="editInput" />
-                                    </t:template>
-                                </t:Column>
+                            <t:Column width="12rem" sortProperty="phone" visible="{= ${appView>/layout} === 'OneColumn' }">
+                                <Label text="Phone" />
+                                <t:template>
+                                    <Input value="{phone}" type="Tel" class="editInput" />
+                                </t:template>
+                            </t:Column>
 
-                                <t:Column sortProperty="address">
-                                    <Label text="Location / Address" />
-                                    <t:template>
-                                        <Input value="{address}" class="editInput" />
-                                    </t:template>
-                                </t:Column>
+                            <t:Column sortProperty="address" visible="{= ${appView>/layout} === 'OneColumn' }">
+                                <Label text="Location / Address" />
+                                <t:template>
+                                    <Input value="{address}" class="editInput" />
+                                </t:template>
+                            </t:Column>
 
-                                <t:Column width="8rem" hAlign="Center">
-                                    <Label text="Actions" />
-                                    <t:template>
-                                        <HBox justifyContent="Center">
-                                            <Button icon="sap-icon://grid" type="Transparent" press=".onRowSelectionChange" tooltip="View Detail" />
-                                            <Button icon="sap-icon://edit" type="Transparent" tooltip="Edit Row" />
-                                        </HBox>
-                                    </t:template>
-                                </t:Column>
-                            </t:columns>
+                            <t:Column width="8rem" hAlign="Center">
+                                <Label text="Actions" />
+                                <t:template>
+                                    <HBox justifyContent="Center">
+                                        <Button icon="sap-icon://grid" type="Transparent" press=".onOpenDetail" tooltip="View Detail" />
+                                        <Button icon="sap-icon://edit" type="Transparent" press=".onEditRow" tooltip="Edit Row" />
+                                    </HBox>
+                                </t:template>
+                            </t:Column>
                         </t:Table>
                     </VBox>
 
@@ -154,7 +156,8 @@
             </Page>
         </f:beginColumnPages>
 
-        <!-- Detail: Supplier Info -->
+        <!-- Detail: Supplier Info + Products
+             Case study: "Tedarikçinin ürünleri bu panelde listelenmelidir" -->
         <f:midColumnPages>
             <Page id="supplierDetailPage" title="{i18n>supplierDetail}">
                 <headerContent>
@@ -171,12 +174,17 @@
                             </VBox>
                         </HBox>
 
+                        <!-- Supplier Information Card -->
                         <form:SimpleForm
                             id="supplierDetailForm"
                             editable="false"
                             layout="ResponsiveGridLayout"
+                            labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
                             class="dashboardCard"
                         >
+                            <form:title>
+                                <core:Title text="{i18n>supplierInformation}" />
+                            </form:title>
                             <Label text="{i18n>supplierName}" />
                             <Text text="{name}" />
                             <Label text="{i18n>supplierEmail}" />
@@ -185,8 +193,16 @@
                             <Text text="{phone}" />
                             <Label text="{i18n>supplierAddress}" />
                             <Text text="{address}" />
+                            <!-- FIX: city ve country alanları eklendi -->
+                            <Label text="{i18n>supplierCity}" />
+                            <Text text="{city}" />
+                            <Label text="{i18n>supplierCountry}" />
+                            <Text text="{country}" />
                         </form:SimpleForm>
 
+                        <!-- Products of this Supplier
+                             Case study: "Tedarikçinin ürünleri bu panelde listelenmelidir"
+                             FIX: Ürün kartında currency hardcoded "TRY" → {currency} binding -->
                         <Panel headerText="{i18n>supplierProducts}" class="sapUiMediumMarginTop dashboardCard">
                             <List
                                 id="supplierProductsList"
@@ -198,12 +214,14 @@
                                     <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
                                         <VBox>
                                             <Text text="{name}" class="cardTitle" />
-                                            <Text text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }" 
-                                                  class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
+                                            <Text
+                                                text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }"
+                                                class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
                                         </VBox>
                                         <VBox alignItems="End">
                                             <Title text="{price}" level="H3" class="heroTitle" />
-                                            <Text text="TRY" class="heroSubtitle" />
+                                            <!-- FIX: Hardcoded "TRY" → {currency} binding -->
+                                            <Text text="{currency}" class="heroSubtitle" />
                                         </VBox>
                                     </HBox>
                                 </CustomListItem>

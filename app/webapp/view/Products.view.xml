@@ -8,7 +8,7 @@
     xmlns:u="sap.ui.unified"
     controllerName="product.management.controller.Products"
 >
-    <f:FlexibleColumnLayout id="productsFCL" layout="OneColumn">
+    <f:FlexibleColumnLayout id="productsFCL" layout="{appView>/layout}">
 
         <!-- ═══════════════════════════════════════════════
              BEGIN COLUMN — Master: Product Table
@@ -47,7 +47,7 @@
                             minAutoRowCount="8"
                             enableSelectAll="true"
                         >
-                            <!-- ── OVERFLOW TOOLBAR (Fixed responsive buttons) ── -->
+                            <!-- ── OVERFLOW TOOLBAR ── -->
                             <t:extension>
                                 <OverflowToolbar style="Clear">
                                     <Title text="Products ({$count})" level="H2" class="cardTitle" />
@@ -92,14 +92,18 @@
                                             <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>
                                     </Button>
+                                    <!-- FIX: AlwaysOverflow → Low
+                                         Geniş ekranda (OneColumn) görünür,
+                                         TwoColumns layout'ta toolbar daraldığında overflow menüye gider -->
                                     <Button
+                                        id="deleteProductsBtn"
                                         text="Delete"
                                         icon="sap-icon://delete"
                                         press=".onDeleteProducts"
                                         class="btnReject"
                                     >
                                         <layoutData>
-                                            <OverflowToolbarLayoutData priority="AlwaysOverflow" />
+                                            <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>
                                     </Button>
                                 </OverflowToolbar>
@@ -116,7 +120,7 @@
                                 </t:Column>
 
                                 <!-- Description -->
-                                <t:Column width="12rem" sortProperty="description">
+                                <t:Column width="12rem" sortProperty="description" visible="{= ${appView>/layout} === 'OneColumn' }">
                                     <Label text="Description" />
                                     <t:template>
                                         <Input value="{description}" class="editInput" />
@@ -131,16 +135,16 @@
                                     </t:template>
                                 </t:Column>
 
-                                <!-- Currency -->
-                                <t:Column width="6rem">
+                                <!-- FIX: Hardcoded "TRY" kaldırıldı → modelden binding -->
+                                <t:Column width="6rem" visible="{= ${appView>/layout} === 'OneColumn' }">
                                     <Label text="Currency" />
                                     <t:template>
-                                        <Text text="TRY" />
+                                        <Text text="{currency}" />
                                     </t:template>
                                 </t:Column>
 
                                 <!-- Stock -->
-                                <t:Column width="8rem" hAlign="End" sortProperty="stock">
+                                <t:Column width="8rem" hAlign="End" sortProperty="stock" visible="{= ${appView>/layout} === 'OneColumn' }">
                                     <Label text="Stock" />
                                     <t:template>
                                         <Input value="{stock}" type="Number" textAlign="End" class="editInput" />
@@ -148,7 +152,7 @@
                                 </t:Column>
 
                                 <!-- Supplier -->
-                                <t:Column width="11rem">
+                                <t:Column width="11rem" visible="{= ${appView>/layout} === 'OneColumn' }">
                                     <Label text="Supplier" />
                                     <t:template>
                                         <Select
@@ -168,8 +172,8 @@
                                     <Label text="Actions" />
                                     <t:template>
                                         <HBox justifyContent="Center">
-                                            <Button icon="sap-icon://grid" type="Transparent" press=".onRowSelectionChange" tooltip="View Detail" />
-                                            <Button icon="sap-icon://edit" type="Transparent" tooltip="Edit Row" />
+                                            <Button icon="sap-icon://grid" type="Transparent" press=".onOpenDetail" tooltip="View Detail" />
+                                            <Button icon="sap-icon://edit" type="Transparent" press=".onEditRow" tooltip="Edit Row" />
                                         </HBox>
                                     </t:template>
                                 </t:Column>
@@ -187,7 +191,8 @@
         </f:beginColumnPages>
 
         <!-- ═══════════════════════════════════════════════
-             MID COLUMN — Detail: Product Info
+             MID COLUMN — Detail: Product Info + Supplier Info
+             Case study: "Seçilen ürünün tedarikçisi bu panelde listelenmelidir"
              ═══════════════════════════════════════════════ -->
         <f:midColumnPages>
             <Page id="productDetailPage" title="{i18n>productDetail}">
@@ -205,6 +210,7 @@
                             </VBox>
                         </HBox>
 
+                        <!-- Product Information Card -->
                         <form:SimpleForm
                             id="productDetailForm"
                             editable="false"
@@ -212,21 +218,48 @@
                             labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
                             class="dashboardCard"
                         >
+                            <form:title>
+                                <core:Title text="{i18n>productInformation}" />
+                            </form:title>
                             <Label text="{i18n>productName}" />
                             <Text text="{name}" />
                             <Label text="{i18n>productDescription}" />
                             <Text text="{description}" />
                             <Label text="{i18n>productPrice}" />
-                            <ObjectNumber number="{price}" unit="TRY" />
+                            <!-- FIX: unit hardcoded "TRY" → {currency} binding -->
+                            <ObjectNumber number="{price}" unit="{currency}" />
                             <Label text="{i18n>productStock}" />
                             <HBox alignItems="Center">
                                 <Text text="{stock}" class="sapUiTinyMarginEnd" />
-                                <Text 
-                                    text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }" 
+                                <Text
+                                    text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }"
                                     class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
                             </HBox>
-                            <Label text="{i18n>productSupplier}" />
+                        </form:SimpleForm>
+
+                        <!-- FIX: Supplier Information Card eklendi (Görsel 2 + case study uyumu)
+                             supplier navigation property $expand ile geliyor -->
+                        <form:SimpleForm
+                            id="productSupplierForm"
+                            editable="false"
+                            layout="ResponsiveGridLayout"
+                            labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
+                            class="dashboardCard sapUiMediumMarginTop"
+                        >
+                            <form:title>
+                                <core:Title text="{i18n>supplierInformation}" />
+                            </form:title>
+                            <Label text="{i18n>supplierName}" />
                             <Text text="{supplier/name}" />
+                            <Label text="{i18n>supplierEmail}" />
+                            <Link text="{supplier/email}" href="mailto:{supplier/email}" />
+                            <Label text="{i18n>supplierPhone}" />
+                            <Text text="{supplier/phone}" />
+                            <!-- FIX: city ve country alanları eklendi -->
+                            <Label text="{i18n>supplierCity}" />
+                            <Text text="{supplier/city}" />
+                            <Label text="{i18n>supplierCountry}" />
+                            <Text text="{supplier/country}" />
                         </form:SimpleForm>
                     </VBox>
                 </content>

@@ -332,6 +332,40 @@ sap.ui.define([
          * ═══════════════════════════════════════════════ */
 
         /**
+         * Open detail panel when clicking the Grid icon in a table row.
+         */
+        onOpenDetail: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext();
+            this._showDetail(oContext);
+            
+            // Sync selection in table
+            var oTable = this.byId("productsTable");
+            var aContexts = oTable.getBinding("rows").getContexts();
+            var iIndex = aContexts.indexOf(oContext);
+            if (iIndex !== -1) {
+                oTable.setSelectedIndex(iIndex);
+            }
+        },
+
+        /**
+         * Open detail panel when clicking the Edit icon (pencil) in a table row.
+         */
+        onEditRow: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext();
+            this._showDetail(oContext);
+            
+            // Sync selection in table
+            var oTable = this.byId("productsTable");
+            var aContexts = oTable.getBinding("rows").getContexts();
+            var iIndex = aContexts.indexOf(oContext);
+            if (iIndex !== -1) {
+                oTable.setSelectedIndex(iIndex);
+            }
+            
+            MessageToast.show(this.getResourceBundle().getText("editModeActive") || "Edit mode active");
+        },
+
+        /**
          * Row selected → show product detail in FCL mid-column.
          * Only opens detail for persisted rows (not transient/new).
          */
@@ -353,7 +387,9 @@ sap.ui.define([
         /** Bind detail page to the selected row's context and expand FCL */
         _showDetail: function (oContext) {
             this.byId("productDetailPage").setBindingContext(oContext);
-            this.byId("productsFCL").setLayout("TwoColumnsMidExpanded");
+            var sLayout = "TwoColumnsMidExpanded";
+            this.byId("productsFCL").setLayout(sLayout);
+            this.getModel("appView").setProperty("/layout", sLayout);
         },
 
         /** Collapse FCL back to single column and clear selection */
@@ -362,7 +398,9 @@ sap.ui.define([
         },
 
         _closeDetail: function () {
-            this.byId("productsFCL").setLayout("OneColumn");
+            var sLayout = "OneColumn";
+            this.byId("productsFCL").setLayout(sLayout);
+            this.getModel("appView").setProperty("/layout", sLayout);
             this.byId("productsTable").clearSelection();
         },
 
@@ -370,11 +408,12 @@ sap.ui.define([
         onToggleDetailFullScreen: function () {
             var oFCL = this.byId("productsFCL");
             var sLayout = oFCL.getLayout();
-            oFCL.setLayout(
-                sLayout === "MidColumnFullScreen"
+            var sNewLayout = sLayout === "MidColumnFullScreen"
                     ? "TwoColumnsMidExpanded"
-                    : "MidColumnFullScreen"
-            );
+                    : "MidColumnFullScreen";
+            
+            oFCL.setLayout(sNewLayout);
+            this.getModel("appView").setProperty("/layout", sNewLayout);
         },
 
         /* ═══════════════════════════════════════════════
