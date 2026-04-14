@@ -252,13 +252,13 @@ sap.ui.define([
                 return [
                     fnEscape(o.name),
                     fnEscape(o.description),
-                    fnEscape(o.price),
+                    '="' + (o.price || "") + '"', // Force Excel to treat as Text to avoid date conversion (e.g., 29.99 -> 29 Sep)
                     fnEscape(o.currency),
                     fnEscape(o.stock)
                 ].join(",");
             });
 
-            var sCSV = "Name,Description,Price,Currency,Stock\n" + aRows.join("\n");
+            var sCSV = "sep=,\nName,Description,Price,Currency,Stock\n" + aRows.join("\n");
             var oBlob = new Blob(["\uFEFF" + sCSV], { type: "text/csv;charset=utf-8;" });
             var sUrl = URL.createObjectURL(oBlob);
             var oLink = document.createElement("a");

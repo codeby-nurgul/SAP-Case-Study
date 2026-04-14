@@ -127,7 +127,12 @@ module.exports = class ProductService extends cds.ApplicationService {
                 // Find matching field
                 for (const [key, field] of Object.entries(expectedCols)) {
                     if (normalizedHeader === key) {
-                        entry[field] = row[colIndex] ? row[colIndex].trim() : '';
+                        let val = row[colIndex] ? row[colIndex].trim() : '';
+                        // Strip Excel formula escape: ="value" -> value
+                        if (val.startsWith('="') && val.endsWith('"')) {
+                            val = val.substring(2, val.length - 1);
+                        }
+                        entry[field] = val;
                         break;
                     }
                 }

@@ -224,12 +224,12 @@ sap.ui.define([
                 return [
                     fnEscape(o.name),
                     fnEscape(o.email),
-                    fnEscape(o.phone),
+                    '="' + (o.phone || "") + '"', // Force Excel to treat as Text to avoid formula calculation
                     fnEscape(o.address)
                 ].join(",");
             });
 
-            var sCSV = "Name,Email,Phone,Address\n" + aRows.join("\n");
+            var sCSV = "sep=,\nName,Email,Phone,Address\n" + aRows.join("\n");
             var oBlob = new Blob(["\uFEFF" + sCSV], { type: "text/csv;charset=utf-8;" });
             var sUrl = URL.createObjectURL(oBlob);
             var oLink = document.createElement("a");
