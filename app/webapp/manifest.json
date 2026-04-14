@@ -100,12 +100,12 @@
                 },
                 {
                     "name": "products",
-                    "pattern": "products",
+                    "pattern": "products/:ID:",
                     "target": "products"
                 },
                 {
                     "name": "suppliers",
-                    "pattern": "suppliers",
+                    "pattern": "suppliers/:ID:",
                     "target": "suppliers"
                 }
             ],

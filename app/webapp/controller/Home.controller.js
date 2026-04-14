@@ -21,6 +21,28 @@ sap.ui.define([
          */
         onNavToSuppliers: function () {
             this.navTo("suppliers");
+        },
+
+        /**
+         * Navigates to Products page and requests opening a specific product detail.
+         */
+        onNavToProductDetail: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext();
+            var sID = oContext.getProperty("ID");
+            this.navTo("products", {
+                ID: sID
+            });
+        },
+
+        /**
+         * Navigates to Suppliers page and requests opening a specific supplier detail.
+         */
+        onNavToSupplierDetail: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext();
+            var sID = oContext.getProperty("ID");
+            this.navTo("suppliers", {
+                ID: sID
+            });
         }
     });
 });

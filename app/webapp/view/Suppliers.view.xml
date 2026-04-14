@@ -21,7 +21,7 @@
                                 <core:Icon src="sap-icon://supplier" size="2rem" color="#0070F2" class="sapUiSmallMarginEnd" />
                                 <VBox>
                                     <Title text="{i18n>suppliersTitle}" class="heroTitle" />
-                                    <Text text="Manage your supplier network and contact information" class="heroSubtitle" />
+                                    <Text text="{i18n>suppliersSubtitle}" class="heroSubtitle" />
                                 </VBox>
                             </HBox>
                         </HBox>
@@ -33,7 +33,8 @@
                             rows="{
                                 path: '/Suppliers',
                                 parameters: {
-                                    $count: true
+                                    $count: true,
+                                    $$updateGroupId: 'batchUpdate'
                                 },
                                 sorter: { path: 'createdAt', descending: true }
                             }"
@@ -125,6 +126,7 @@
                                     <Input
                                         value="{email}"
                                         type="Email"
+                                        valueLiveUpdate="true"
                                         liveChange=".onEmailLiveChange"
                                         class="editInput" />
                                 </t:template>
@@ -133,14 +135,14 @@
                             <t:Column sortProperty="phone">
                                 <Label text="{i18n>supplierPhone}" />
                                 <t:template>
-                                    <Input value="{phone}" type="Tel" class="editInput" />
+                                    <Input value="{phone}" valueLiveUpdate="true" type="Tel" class="editInput" />
                                 </t:template>
                             </t:Column>
 
                             <t:Column sortProperty="address">
                                 <Label text="{i18n>supplierAddress}" />
                                 <t:template>
-                                    <Input value="{address}" class="editInput" />
+                                    <Input value="{address}" valueLiveUpdate="true" class="editInput" />
                                 </t:template>
                             </t:Column>
 

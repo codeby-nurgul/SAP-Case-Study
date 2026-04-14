@@ -45,11 +45,46 @@ sap.ui.define([
         },
 
         /**
-         * Route matched — reload supplier dropdown data.
-         * Product table refreshes automatically via OData list binding.
+         * Route matched — reload supplier dropdown data and handle deep-linking.
          */
-        _onRouteMatched: function () {
+        _onRouteMatched: function (oEvent) {
             this._loadSuppliers();
+
+            var oArgs = oEvent.getParameter("arguments");
+            if (oArgs && oArgs.ID) {
+                this._openDetailByID(oArgs.ID);
+            }
+        },
+
+        /**
+         * Finds a row by ID and opens the detail panel.
+         */
+        _openDetailByID: function (sID) {
+            var oTable = this.byId("productsTable");
+            var oBinding = oTable.getBinding("rows");
+
+            // Wait for data to be available
+            oBinding.attachEventOnce("dataReceived", function () {
+                var aContexts = oBinding.getContexts();
+                var oMatch = aContexts.find(function (oCtx) {
+                    return oCtx.getProperty("ID") === sID;
+                });
+
+                if (oMatch) {
+                    this._showDetail(oMatch);
+                }
+            }.bind(this));
+
+            // If data is already there, try immediately
+            var aContexts = oBinding.getContexts();
+            if (aContexts && aContexts.length > 0) {
+                var oMatch = aContexts.find(function (oCtx) {
+                    return oCtx.getProperty("ID") === sID;
+                });
+                if (oMatch) {
+                    this._showDetail(oMatch);
+                }
+            }
         },
 
         /**
@@ -79,13 +114,19 @@ sap.ui.define([
         onAddProduct: function () {
             var oTable = this.byId("productsTable");
             var oBinding = oTable.getBinding("rows");
+            
+            // Clear search/filters to ensure new row is visible
+            var oSearchField = this.byId("productsSearch");
+            if (oSearchField) { oSearchField.setValue(""); }
+            oBinding.filter([]);
+
             oBinding.create({
                 name: "",
                 description: "",
-                price: "0",
+                price: 0.00,
                 stock: 0
             });
-            // Scroll to top so the user sees the new row
+            // Scroll to top
             oTable.setFirstVisibleRow(0);
         },
 

@@ -51,16 +51,21 @@
                                         noDataText="{i18n>noProducts}"
                                         showSeparators="Inner"
                                     >
-                                        <CustomListItem class="sapUiSmallMarginTopBottom">
+                                        <CustomListItem 
+                                            type="Navigation"
+                                            press=".onNavToProductDetail"
+                                            class="sapUiSmallMarginTopBottom">
                                             <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
                                                 <VBox>
                                                     <Text text="{name}" class="cardTitle" />
                                                     <Text text="{description}" class="sapUiTinyMarginTop sapUiSmallMarginBottom heroSubtitle" maxLines="1" />
                                                     <HBox alignItems="Center">
                                                         <!-- Stock Badge -->
-                                                        <Text
+                                                        <ObjectStatus
                                                             text="{= ${stock} &lt; 10 ? ${i18n>lowStock} : ${i18n>inStock} }"
-                                                            class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
+                                                            state="{= ${stock} &lt; 10 ? 'Warning' : 'Success' }"
+                                                            inverted="true"
+                                                            class="sapUiTinyMarginEnd" />
                                                         <Text text=" • {supplier/name}" class="heroSubtitle sapUiSmallMarginBegin" visible="{= !!${supplier/name} }" />
                                                     </HBox>
                                                 </VBox>
@@ -95,7 +100,9 @@
                                         noDataText="{i18n>noSuppliers}"
                                         showSeparators="Inner"
                                     >
-                                        <CustomListItem>
+                                        <CustomListItem
+                                            type="Navigation"
+                                            press=".onNavToSupplierDetail">
                                             <VBox class="sapUiSmallMargin">
                                                 <Text text="{address}" class="heroSubtitle" />
                                                 <Text text="{name}" class="cardTitle sapUiTinyMarginTop" />

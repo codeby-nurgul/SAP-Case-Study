@@ -43,8 +43,42 @@ sap.ui.define([
                 .attachPatternMatched(this._onRouteMatched, this);
         },
 
-        _onRouteMatched: function () {
-            // Table auto-refreshes via OData list binding
+        _onRouteMatched: function (oEvent) {
+            var oArgs = oEvent.getParameter("arguments");
+            if (oArgs && oArgs.ID) {
+                this._openDetailByID(oArgs.ID);
+            }
+        },
+
+        /**
+         * Finds a row by ID and opens the detail panel.
+         */
+        _openDetailByID: function (sID) {
+            var oTable = this.byId("suppliersTable");
+            var oBinding = oTable.getBinding("rows");
+
+            // Wait for data to be available
+            oBinding.attachEventOnce("dataReceived", function () {
+                var aContexts = oBinding.getContexts();
+                var oMatch = aContexts.find(function (oCtx) {
+                    return oCtx.getProperty("ID") === sID;
+                });
+
+                if (oMatch) {
+                    this._showDetail(oMatch);
+                }
+            }.bind(this));
+
+            // If data is already there, try immediately
+            var aContexts = oBinding.getContexts();
+            if (aContexts && aContexts.length > 0) {
+                var oMatch = aContexts.find(function (oCtx) {
+                    return oCtx.getProperty("ID") === sID;
+                });
+                if (oMatch) {
+                    this._showDetail(oMatch);
+                }
+            }
         },
 
         /* ═══════════════════════════════════════════════
@@ -57,12 +91,19 @@ sap.ui.define([
         onAddSupplier: function () {
             var oTable = this.byId("suppliersTable");
             var oBinding = oTable.getBinding("rows");
+
+            // Clear search/filters to ensure new row is visible
+            var oSearchField = this.byId("suppliersSearch");
+            if (oSearchField) { oSearchField.setValue(""); }
+            oBinding.filter([]);
+
             oBinding.create({
                 name: "",
                 email: "",
                 phone: "",
                 address: ""
             });
+            // Scroll to top
             oTable.setFirstVisibleRow(0);
         },
 

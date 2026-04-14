@@ -23,7 +23,7 @@
                                 <core:Icon src="sap-icon://product" size="2rem" color="#0070F2" class="sapUiSmallMarginEnd" />
                                 <VBox>
                                     <Title text="{i18n>productsTitle}" class="heroTitle" />
-                                    <Text text="Manage your product inventory and suppliers" class="heroSubtitle" />
+                                    <Text text="{i18n>productsSubtitle}" class="heroSubtitle" />
                                 </VBox>
                             </HBox>
                         </HBox>
@@ -36,7 +36,8 @@
                                 path: '/Products',
                                 parameters: {
                                     $count: true,
-                                    $expand: 'supplier'
+                                    $expand: 'supplier',
+                                    $$updateGroupId: 'batchUpdate'
                                 },
                                 sorter: { path: 'createdAt', descending: true }
                             }"
@@ -128,7 +129,7 @@
                                 <t:Column sortProperty="description">
                                     <Label text="{i18n>productDescription}" />
                                     <t:template>
-                                        <Input value="{description}" class="editInput" />
+                                        <Input value="{description}" valueLiveUpdate="true" class="editInput" />
                                     </t:template>
                                 </t:Column>
 
@@ -136,7 +137,16 @@
                                 <t:Column hAlign="End" sortProperty="price">
                                     <Label text="{i18n>productPrice}" />
                                     <t:template>
-                                        <Input value="{price}" type="Number" textAlign="End" class="editInput" />
+                                        <Input
+                                            value="{
+                                                path: 'price',
+                                                type: 'sap.ui.model.odata.type.Decimal',
+                                                constraints: { precision: 10, scale: 2 },
+                                                formatOptions: { groupingEnabled: false }
+                                            }"
+                                            valueLiveUpdate="true"
+                                            textAlign="End"
+                                            class="editInput" />
                                     </t:template>
                                 </t:Column>
 
@@ -152,7 +162,7 @@
                                 <t:Column hAlign="End" sortProperty="stock">
                                     <Label text="{i18n>productStock}" />
                                     <t:template>
-                                        <Input value="{stock}" type="Number" textAlign="End" class="editInput" />
+                                        <Input value="{stock}" valueLiveUpdate="true" type="Number" textAlign="End" class="editInput" />
                                     </t:template>
                                 </t:Column>
 
@@ -236,9 +246,10 @@
                             <Label text="{i18n>productStock}" />
                             <HBox alignItems="Center">
                                 <Text text="{stock}" class="sapUiTinyMarginEnd" />
-                                <Text
+                                <ObjectStatus
                                     text="{= ${stock} &lt; 10 ? ${i18n>lowStock} : ${i18n>inStock} }"
-                                    class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
+                                    state="{= ${stock} &lt; 10 ? 'Warning' : 'Success' }"
+                                    inverted="true" />
                             </HBox>
                         </form:SimpleForm>
 
