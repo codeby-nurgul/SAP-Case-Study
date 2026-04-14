@@ -14,7 +14,7 @@
         <f:beginColumnPages>
             <Page id="suppliersListPage" showHeader="false" enableScrolling="false">
                 <content>
-                    <VBox fitContainer="true">
+                    <VBox fitContainer="true" class="sapUiMediumMarginBeginEnd">
                         <!-- Custom Page Header -->
                         <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiMediumMargin">
                             <HBox alignItems="Center">
@@ -28,6 +28,7 @@
 
                         <t:Table
                             id="suppliersTable"
+                            width="100%"
                             class="blueTable sapUiSmallMarginBeginEnd"
                             rows="{
                                 path: '/Suppliers',
@@ -47,7 +48,7 @@
                             <!-- ── OVERFLOW TOOLBAR ── -->
                             <t:extension>
                                 <OverflowToolbar style="Clear">
-                                    <Title text="Suppliers ({$count})" level="H2" class="cardTitle" />
+                                    <Title text="{i18n>suppliersTitle} ({$count})" level="H2" class="cardTitle" />
                                     <ToolbarSpacer />
                                     <SearchField
                                         id="suppliersSearch"
@@ -70,7 +71,7 @@
                                         </layoutData>
                                     </Button>
                                     <Button
-                                        text="Create"
+                                        text="{i18n>addSupplier}"
                                         icon="sap-icon://add"
                                         press=".onAddSupplier"
                                         class="btnPrimary"
@@ -80,7 +81,7 @@
                                         </layoutData>
                                     </Button>
                                     <Button
-                                        text="CSV Upload"
+                                        text="{i18n>uploadCSV}"
                                         icon="sap-icon://upload"
                                         press=".onOpenCSVDialog"
                                         class="btnOutline"
@@ -94,7 +95,7 @@
                                          TwoColumns layout'ta toolbar daraldığında overflow menüye gider -->
                                     <Button
                                         id="deleteSuppliersBtn"
-                                        text="Delete"
+                                        text="{i18n>delete}"
                                         icon="sap-icon://delete"
                                         press=".onDeleteSuppliers"
                                         class="btnReject"
@@ -107,36 +108,44 @@
                             </t:extension>
 
                             <!-- ── TABLE COLUMNS ── -->
-                            <t:Column width="15rem" sortProperty="name" filterProperty="name">
-                                <Label text="Name" />
+                            <t:Column sortProperty="name" filterProperty="name">
+                                <Label text="{i18n>supplierName}" />
                                 <t:template>
-                                    <Input value="{name}" valueLiveUpdate="true" class="editInput" />
+                                    <Input
+                                        value="{name}"
+                                        valueLiveUpdate="true"
+                                        liveChange=".onNameLiveChange"
+                                        class="editInput" />
                                 </t:template>
                             </t:Column>
 
-                            <t:Column width="15rem" sortProperty="email">
-                                <Label text="Email" />
+                            <t:Column sortProperty="email">
+                                <Label text="{i18n>supplierEmail}" />
                                 <t:template>
-                                    <Input value="{email}" type="Email" class="editInput" />
+                                    <Input
+                                        value="{email}"
+                                        type="Email"
+                                        liveChange=".onEmailLiveChange"
+                                        class="editInput" />
                                 </t:template>
                             </t:Column>
 
-                            <t:Column width="12rem" sortProperty="phone" visible="{= ${appView>/layout} === 'OneColumn' }">
-                                <Label text="Phone" />
+                            <t:Column sortProperty="phone">
+                                <Label text="{i18n>supplierPhone}" />
                                 <t:template>
                                     <Input value="{phone}" type="Tel" class="editInput" />
                                 </t:template>
                             </t:Column>
 
-                            <t:Column sortProperty="address" visible="{= ${appView>/layout} === 'OneColumn' }">
-                                <Label text="Location / Address" />
+                            <t:Column sortProperty="address">
+                                <Label text="{i18n>supplierAddress}" />
                                 <t:template>
                                     <Input value="{address}" class="editInput" />
                                 </t:template>
                             </t:Column>
 
-                            <t:Column width="8rem" hAlign="Center">
-                                <Label text="Actions" />
+                            <t:Column width="7rem" hAlign="Center">
+                                <Label text="{i18n>actions}" />
                                 <t:template>
                                     <HBox justifyContent="Center">
                                         <Button icon="sap-icon://grid" type="Transparent" press=".onOpenDetail" tooltip="View Detail" />
@@ -149,8 +158,8 @@
 
                     <!-- Sticky Save/Cancel -->
                     <HBox class="stickyBottomBtn">
-                        <Button text="Save" icon="sap-icon://save" type="Emphasized" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" />
-                        <Button text="Cancel" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" />
+                        <Button text="{i18n>save}" icon="sap-icon://save" type="Emphasized" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" />
+                        <Button text="{i18n>cancel}" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" />
                     </HBox>
                 </content>
             </Page>

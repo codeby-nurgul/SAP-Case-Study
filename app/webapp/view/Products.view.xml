@@ -16,7 +16,7 @@
         <f:beginColumnPages>
             <Page id="productsListPage" showHeader="false" enableScrolling="false">
                 <content>
-                    <VBox fitContainer="true">
+                    <VBox fitContainer="true" class="sapUiMediumMarginBeginEnd">
                         <!-- Custom Page Header -->
                         <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiMediumMargin">
                             <HBox alignItems="Center">
@@ -30,6 +30,7 @@
 
                         <t:Table
                             id="productsTable"
+                            width="100%"
                             class="blueTable sapUiSmallMarginBeginEnd"
                             rows="{
                                 path: '/Products',
@@ -50,7 +51,7 @@
                             <!-- ── OVERFLOW TOOLBAR ── -->
                             <t:extension>
                                 <OverflowToolbar style="Clear">
-                                    <Title text="Products ({$count})" level="H2" class="cardTitle" />
+                                    <Title text="{i18n>productsTitle} ({$count})" level="H2" class="cardTitle" />
                                     <ToolbarSpacer />
                                     <SearchField
                                         id="productsSearch"
@@ -73,7 +74,7 @@
                                         </layoutData>
                                     </Button>
                                     <Button
-                                        text="Create"
+                                        text="{i18n>addProduct}"
                                         icon="sap-icon://add"
                                         press=".onAddProduct"
                                         class="btnPrimary"
@@ -83,7 +84,7 @@
                                         </layoutData>
                                     </Button>
                                     <Button
-                                        text="CSV Upload"
+                                        text="{i18n>uploadCSV}"
                                         icon="sap-icon://upload"
                                         press=".onOpenCSVDialog"
                                         class="btnOutline"
@@ -97,7 +98,7 @@
                                          TwoColumns layout'ta toolbar daraldığında overflow menüye gider -->
                                     <Button
                                         id="deleteProductsBtn"
-                                        text="Delete"
+                                        text="{i18n>delete}"
                                         icon="sap-icon://delete"
                                         press=".onDeleteProducts"
                                         class="btnReject"
@@ -112,48 +113,52 @@
                             <!-- ── TABLE COLUMNS ── -->
                             <t:columns>
                                 <!-- Name -->
-                                <t:Column width="15rem" sortProperty="name" filterProperty="name">
-                                    <Label text="Name" />
+                                <t:Column sortProperty="name" filterProperty="name">
+                                    <Label text="{i18n>productName}" />
                                     <t:template>
-                                        <Input value="{name}" valueLiveUpdate="true" class="editInput" />
+                                        <Input
+                                            value="{name}"
+                                            valueLiveUpdate="true"
+                                            liveChange=".onNameLiveChange"
+                                            class="editInput" />
                                     </t:template>
                                 </t:Column>
 
                                 <!-- Description -->
-                                <t:Column width="12rem" sortProperty="description" visible="{= ${appView>/layout} === 'OneColumn' }">
-                                    <Label text="Description" />
+                                <t:Column sortProperty="description">
+                                    <Label text="{i18n>productDescription}" />
                                     <t:template>
                                         <Input value="{description}" class="editInput" />
                                     </t:template>
                                 </t:Column>
 
                                 <!-- Price -->
-                                <t:Column width="6rem" hAlign="End" sortProperty="price">
-                                    <Label text="Price" />
+                                <t:Column hAlign="End" sortProperty="price">
+                                    <Label text="{i18n>productPrice}" />
                                     <t:template>
                                         <Input value="{price}" type="Number" textAlign="End" class="editInput" />
                                     </t:template>
                                 </t:Column>
 
                                 <!-- FIX: Hardcoded "TRY" kaldırıldı → modelden binding -->
-                                <t:Column width="6rem" visible="{= ${appView>/layout} === 'OneColumn' }">
-                                    <Label text="Currency" />
+                                <t:Column>
+                                    <Label text="{i18n>currency}" />
                                     <t:template>
                                         <Text text="{currency}" />
                                     </t:template>
                                 </t:Column>
 
                                 <!-- Stock -->
-                                <t:Column width="8rem" hAlign="End" sortProperty="stock" visible="{= ${appView>/layout} === 'OneColumn' }">
-                                    <Label text="Stock" />
+                                <t:Column hAlign="End" sortProperty="stock">
+                                    <Label text="{i18n>productStock}" />
                                     <t:template>
                                         <Input value="{stock}" type="Number" textAlign="End" class="editInput" />
                                     </t:template>
                                 </t:Column>
 
                                 <!-- Supplier -->
-                                <t:Column width="11rem" visible="{= ${appView>/layout} === 'OneColumn' }">
-                                    <Label text="Supplier" />
+                                <t:Column>
+                                    <Label text="{i18n>productSupplier}" />
                                     <t:template>
                                         <Select
                                             selectedKey="{supplier_ID}"
@@ -168,8 +173,8 @@
                                 </t:Column>
 
                                 <!-- Actions -->
-                                <t:Column width="8rem" hAlign="Center">
-                                    <Label text="Actions" />
+                                <t:Column width="7rem" hAlign="Center">
+                                    <Label text="{i18n>actions}" />
                                     <t:template>
                                         <HBox justifyContent="Center">
                                             <Button icon="sap-icon://grid" type="Transparent" press=".onOpenDetail" tooltip="View Detail" />
@@ -183,8 +188,8 @@
 
                     <!-- Sticky Save/Cancel Buttons -->
                     <HBox class="stickyBottomBtn">
-                        <Button text="Save" icon="sap-icon://save" type="Emphasized" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" />
-                        <Button text="Cancel" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" />
+                        <Button text="{i18n>save}" icon="sap-icon://save" type="Emphasized" press=".onSaveChanges" class="btnPrimary sapUiSmallMarginEnd" />
+                        <Button text="{i18n>cancel}" icon="sap-icon://sys-cancel-2" press=".onCancelChanges" class="btnOutline" />
                     </HBox>
                 </content>
             </Page>
@@ -232,7 +237,7 @@
                             <HBox alignItems="Center">
                                 <Text text="{stock}" class="sapUiTinyMarginEnd" />
                                 <Text
-                                    text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }"
+                                    text="{= ${stock} &lt; 10 ? ${i18n>lowStock} : ${i18n>inStock} }"
                                     class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
                             </HBox>
                         </form:SimpleForm>

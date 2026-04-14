@@ -103,7 +103,16 @@ sap.ui.define([
                 return;
             }
 
-            MessageBox.confirm(oBundle.getText("deleteConfirmMessage"), {
+            var sMsg;
+            if (aIndices.length === 1) {
+                var oContext = oTable.getContextByIndex(aIndices[0]);
+                var sName = oContext.getProperty("name");
+                sMsg = oBundle.getText("deleteConfirmSingle", [sName]);
+            } else {
+                sMsg = oBundle.getText("deleteConfirmPlural");
+            }
+
+            MessageBox.confirm(sMsg, {
                 title: oBundle.getText("deleteConfirmTitle"),
                 onClose: function (sAction) {
                     if (sAction === MessageBox.Action.OK) {
@@ -337,7 +346,11 @@ sap.ui.define([
         onOpenDetail: function (oEvent) {
             var oContext = oEvent.getSource().getBindingContext();
             this._showDetail(oContext);
-            
+
+            // Layout: sol tablo geniş, sağ detay dar
+            this.getOwnerComponent().getModel("appView")
+                .setProperty("/layout", "TwoColumnsBeginExpanded");
+
             // Sync selection in table
             var oTable = this.byId("productsTable");
             var aContexts = oTable.getBinding("rows").getContexts();
@@ -353,7 +366,7 @@ sap.ui.define([
         onEditRow: function (oEvent) {
             var oContext = oEvent.getSource().getBindingContext();
             this._showDetail(oContext);
-            
+
             // Sync selection in table
             var oTable = this.byId("productsTable");
             var aContexts = oTable.getBinding("rows").getContexts();
@@ -361,7 +374,7 @@ sap.ui.define([
             if (iIndex !== -1) {
                 oTable.setSelectedIndex(iIndex);
             }
-            
+
             MessageToast.show(this.getResourceBundle().getText("editModeActive") || "Edit mode active");
         },
 
@@ -387,7 +400,7 @@ sap.ui.define([
         /** Bind detail page to the selected row's context and expand FCL */
         _showDetail: function (oContext) {
             this.byId("productDetailPage").setBindingContext(oContext);
-            var sLayout = "TwoColumnsMidExpanded";
+            var sLayout = "TwoColumnsBeginExpanded";
             this.byId("productsFCL").setLayout(sLayout);
             this.getModel("appView").setProperty("/layout", sLayout);
         },
@@ -409,9 +422,9 @@ sap.ui.define([
             var oFCL = this.byId("productsFCL");
             var sLayout = oFCL.getLayout();
             var sNewLayout = sLayout === "MidColumnFullScreen"
-                    ? "TwoColumnsMidExpanded"
-                    : "MidColumnFullScreen";
-            
+                ? "TwoColumnsBeginExpanded"
+                : "MidColumnFullScreen";
+
             oFCL.setLayout(sNewLayout);
             this.getModel("appView").setProperty("/layout", sNewLayout);
         },
@@ -448,27 +461,100 @@ sap.ui.define([
             var oCSVModel = this.getModel("csvModel");
             oCSVModel.setProperty("/results", []);
             oCSVModel.setProperty("/canUpload", false);
+            oCSVModel.setProperty("/rowCountText", "");
 
             var aFiles = oEvent.getParameter("files");
-            var oFile = null;
-            if (aFiles && aFiles.length > 0) {
-                oFile = aFiles[0];
-            } else {
-                // Fallback: access file via DOM
-                var oFileUploader = oEvent.getSource();
-                var oDomRef = oFileUploader.getFocusDomRef();
-                if (oDomRef && oDomRef.files) {
-                    oFile = oDomRef.files[0];
-                }
+            var oFile = (aFiles && aFiles.length > 0) ? aFiles[0] : null;
+            if (!oFile) {
+                var oDomRef = oEvent.getSource().getFocusDomRef();
+                if (oDomRef && oDomRef.files) { oFile = oDomRef.files[0]; }
             }
-            
+
             this._oCSVFile = oFile;
-            if (oFile) {
-                oCSVModel.setProperty("/rowCountText", "Selected file: " + oFile.name);
-                oCSVModel.setProperty("/canUpload", true);
-            } else {
-                oCSVModel.setProperty("/rowCountText", "");
+            if (!oFile) { return; }
+
+            var oReader = new FileReader();
+            oReader.onload = function (e) {
+                this._validateCSVClientSide(e.target.result, oFile.name, oCSVModel, ["name"]);
+            }.bind(this);
+            oReader.readAsText(oFile);
+        },
+
+        _validateCSVClientSide: function (sContent, sFileName, oCSVModel, aRequiredCols) {
+            var aResults = [];
+            var bAllPassed = true;
+
+            // 1. CSV format geçerli mi?
+            var aLines = [];
+            var bFormatValid = false;
+            try {
+                aLines = sContent.trim().split(/\r?\n/);
+                bFormatValid = aLines.length > 0 && aLines[0].indexOf(",") !== -1;
+            } catch (e) { bFormatValid = false; }
+
+            aResults.push({
+                name: "CSV format is valid",
+                message: bFormatValid ? "" : "File cannot be parsed as CSV",
+                type: bFormatValid ? "Success" : "Error"
+            });
+            if (!bFormatValid) { bAllPassed = false; }
+
+            // 2. Zorunlu kolonlar var mı?
+            var aHeaders = bFormatValid
+                ? aLines[0].split(",").map(function (h) { return h.trim().toLowerCase(); })
+                : [];
+            var aDataRows = bFormatValid
+                ? aLines.slice(1).filter(function (l) { return l.trim() !== ""; })
+                : [];
+
+            var aMissing = aRequiredCols.filter(function (c) { return aHeaders.indexOf(c) === -1; });
+            var bColsOk = aMissing.length === 0;
+            aResults.push({
+                name: "Required columns are present",
+                message: bColsOk ? "" : "Missing: " + aMissing.join(", "),
+                type: bColsOk ? "Success" : "Error"
+            });
+            if (!bColsOk) { bAllPassed = false; }
+
+            // 3. Satır verisi geçerli mi? (boş name, geçersiz email vs.)
+            var aInvalid = [];
+            if (bFormatValid && bColsOk) {
+                var iNameIdx = aHeaders.indexOf("name");
+                var iEmailIdx = aHeaders.indexOf("email");
+                var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                aDataRows.forEach(function (sLine, i) {
+                    var aCells = sLine.split(",");
+                    if (iNameIdx >= 0 && !(aCells[iNameIdx] || "").trim()) {
+                        aInvalid.push("name (row " + (i + 2) + ")");
+                    }
+                    if (iEmailIdx >= 0) {
+                        var sEmail = (aCells[iEmailIdx] || "").trim();
+                        if (!sEmail || !EMAIL_RE.test(sEmail)) {
+                            aInvalid.push("email (row " + (i + 2) + ")");
+                        }
+                    }
+                });
             }
+            var bDataOk = aInvalid.length === 0;
+            aResults.push({
+                name: "All columns are valid for this entry",
+                message: bDataOk ? "" : "Invalid: " + aInvalid.slice(0, 3).join(", ") + (aInvalid.length > 3 ? "..." : ""),
+                type: bDataOk ? "Success" : "Error"
+            });
+            if (!bDataOk) { bAllPassed = false; }
+
+            // 4. En az 1 satır var mı?
+            var bHasRows = aDataRows.length > 0;
+            aResults.push({
+                name: "File contains data rows",
+                message: bHasRows ? "" : "No data rows found",
+                type: bHasRows ? "Success" : "Error"
+            });
+            if (!bHasRows) { bAllPassed = false; }
+
+            oCSVModel.setProperty("/rowCountText", sFileName + " (" + aDataRows.length + " rows)");
+            oCSVModel.setProperty("/results", aResults);
+            oCSVModel.setProperty("/canUpload", bAllPassed);
         },
 
         /** Read CSV file content and call the OData upload action */
@@ -537,11 +623,11 @@ sap.ui.define([
 
                 // If fully successful, could close or let user see. Disabling upload button to prevent double submit
                 if (oResult.failed === 0) {
-                     MessageToast.show(oBundle.getText("csvUploadSuccess", [oResult.success]));
-                     // Refresh table to show newly imported rows
-                     this.byId("productsTable").getBinding("rows").refresh();
+                    MessageToast.show(oBundle.getText("csvUploadSuccess", [oResult.success]));
+                    // Refresh table to show newly imported rows
+                    this.byId("productsTable").getBinding("rows").refresh();
                 } else {
-                     oCSVModel.setProperty("/canUpload", true); // Let them try again if there were errors
+                    oCSVModel.setProperty("/canUpload", true); // Let them try again if there were errors
                 }
 
             }.bind(this)).catch(function (oError) {
@@ -579,7 +665,7 @@ sap.ui.define([
 
             aContexts.forEach(function (oContext) {
                 if (oContext.hasPendingChanges() || oContext.isTransient()) {
-                    var sName  = oContext.getProperty("name");
+                    var sName = oContext.getProperty("name");
                     var nPrice = oContext.getProperty("price");
                     var nStock = oContext.getProperty("stock");
 
@@ -599,6 +685,27 @@ sap.ui.define([
             return aErrors.filter(function (sErr, iIdx, aArr) {
                 return aArr.indexOf(sErr) === iIdx;
             });
+        },
+
+        /* ═══════════════════════════════════════════════
+         *  LIVE VALIDATION
+         * ═══════════════════════════════════════════════ */
+
+        /**
+         * Real-time validation for Name field as user types.
+         */
+        onNameLiveChange: function (oEvent) {
+            var oInput = oEvent.getSource();
+            var sValue = oEvent.getParameter("value");
+            if (!sValue || sValue.trim() === "") {
+                oInput.setValueState("Error");
+                oInput.setValueStateText(
+                    this.getResourceBundle().getText("nameRequired")
+                );
+            } else {
+                oInput.setValueState("None");
+                oInput.setValueStateText("");
+            }
         }
     });
 });

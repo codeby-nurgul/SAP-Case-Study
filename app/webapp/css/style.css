@@ -1,22 +1,25 @@
-/* ═══════════════════════════════════════════════
-   SAP UI5 CUSTOM THEME — MINIMAL BLUE (HORIZON)
-   ═══════════════════════════════════════════════ */
+/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+   SAP UI5 CUSTOM THEME \u2014 MINIMAL BLUE (HORIZON)
+   \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */
 
 :root {
     --sapPrimaryBlue: #0070F2;
     --sapActiveNavBg: #EBF4FF;
     --sapSuccessGreen: #188918;
-    --sapErrorRed: #BB0000;
+    --sapErrorRed: #f14c4c;
     --sapWarningOrange: #E76500;
     --sapTextPrimary: #1D2D3E;
     --sapTextSecondary: #556B82;
     --sapBorder: #E5E5E5;
     --sapBackground: #FFFFFF;
-    --sapCardShadow: 0 2px 8px rgba(0,0,0,0.08);
+    --sapCardShadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --sapHoverBg: #EBF4FF;
+    --sapSelectedBg: #FAFBFD;
+    --sapSurface: #FFFFFF;
 }
 
 /* Dark Mode Overrides */
-html.sap-desktop .sapUiTheme-sap_horizon_dark, 
+html.sap-desktop .sapUiTheme-sap_horizon_dark,
 .sapUiTheme-sap_horizon_dark {
     --sapPrimaryBlue: #4b9bfa;
     --sapActiveNavBg: #1a2430;
@@ -24,22 +27,30 @@ html.sap-desktop .sapUiTheme-sap_horizon_dark,
     --sapTextSecondary: #b1b9c2;
     --sapBorder: #293846;
     --sapBackground: #12171c;
-    --sapCardShadow: 0 2px 8px rgba(0,0,0,0.5);
+    --sapCardShadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --sapHoverBg: #222d3a;
+    --sapSelectedBg: #1c2630;
+    --sapSurface: #1c2228;
+    --sapErrorRed: #ff6e6e;
 }
 
-/* ── Typography Override ── */
-body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
+/* \u2500\u2500 Typography Override \u2500\u2500 */
+body,
+.sapMText,
+.sapMTitle,
+.sapMLabel,
+.sapMInputBaseInner {
     font-family: "72", "72full", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* ── Layout & Sidebar ── */
+/* \u2500\u2500 Layout & Sidebar \u2500\u2500 */
 .sidebarNav {
     background-color: var(--sapBackground) !important;
     border-right: 1px solid var(--sapBorder) !important;
 }
 
 /* Sidebar Active Item */
-.sidebarNav .sapTntNavIItemActive, 
+.sidebarNav .sapTntNavIItemActive,
 .sidebarNav .sapTntNavIItemSelected {
     background-color: var(--sapActiveNavBg) !important;
     border-left: 3px solid var(--sapPrimaryBlue) !important;
@@ -53,10 +64,10 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 }
 
 .sidebarNav .sapTntNavIItem:hover {
-    background-color: #f7f9fc !important;
+    background-color: var(--sapHoverBg) !important;
 }
 
-/* ── Header ── */
+/* \u2500\u2500 Header \u2500\u2500 */
 .appHeader {
     background-color: var(--sapBackground) !important;
     border-bottom: 1px solid var(--sapBorder) !important;
@@ -68,7 +79,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     color: var(--sapTextPrimary) !important;
 }
 
-/* ── Home Page Styles ── */
+/* \u2500\u2500 Home Page Styles \u2500\u2500 */
 .heroSection {
     padding: 3rem 2rem;
     background-color: #fbfcfd;
@@ -96,7 +107,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 }
 
 .dashboardCard:hover {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
     transform: translateY(-4px) !important;
 }
 
@@ -106,7 +117,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     color: var(--sapTextPrimary) !important;
 }
 
-/* ── Table Styles (Products/Suppliers) ── */
+/* \u2500\u2500 Table Styles (Products/Suppliers) \u2500\u2500 */
 .blueTable .sapUiTableHdr {
     background-color: transparent !important;
     border-bottom: 1px solid var(--sapBorder) !important;
@@ -122,7 +133,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     border-collapse: collapse !important;
 }
 
-/* Tablonun kendisi ekrana %100 sabitlensin, kart görünümü kazansın */
+/* Tablonun kendisi ekrana %100 sabitlensin, kart g\u00F6r\u00FCn\u00FCm\u00FC kazans\u0131n */
 .blueTable {
     width: 100% !important;
     max-width: 100vw !important;
@@ -134,7 +145,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     margin-top: 1rem !important;
 }
 
-/* Tablo içindeki ekstra sınırları temizle (Dış sınır artık .blueTable'da) */
+/* Tablo i\u00E7indeki ekstra s\u0131n\u0131rlar\u0131 temizle (D\u0131\u015F s\u0131n\u0131r art\u0131k .blueTable'da) */
 .blueTable .sapUiTableHdr,
 .blueTable .sapUiTableHdrScr {
     border-left: none !important;
@@ -145,7 +156,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     border-top: none !important;
 }
 
-/* Yüksekliği içeriğe uydurma */
+/* Y\u00FCksekli\u011Fi i\u00E7eri\u011Fe uydurma */
 .blueTable .sapUiTableCCnt {
     height: auto !important;
     min-height: auto !important;
@@ -156,13 +167,13 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     transition: background-color 0.3s ease !important;
 }
 
-.blueTable .sapUiTableTr:hover, 
-.blueTable .sapUiTableTr:hover > td {
-    background-color: #EBF4FF !important;
+.blueTable .sapUiTableTr:hover,
+.blueTable .sapUiTableTr:hover>td {
+    background-color: var(--sapHoverBg) !important;
     cursor: pointer;
 }
 
-/* Boş satırları tamamen gizle */
+/* Bo\u015F sat\u0131rlar\u0131 tamamen gizle */
 .blueTable .sapUiTableEmptyRow {
     display: none !important;
 }
@@ -170,15 +181,15 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 /* Edit Mode Accent */
 .editingRow {
     border-left: 3px solid var(--sapPrimaryBlue) !important;
-    background-color: #FAFBFD !important;
+    background-color: var(--sapSelectedBg) !important;
 }
 
-/* Tüm hücrelerin içindeki input ve select bileşenlerini sıfırla */
-.blueTable .sapUiTableTr > td .sapMInputBaseContentWrapper,
-.blueTable .sapUiTableTr > td .sapMSelect,
-.blueTable .sapUiTableTr > td .sapMInputBaseInner,
-.blueTable .sapUiTableTr > td input,
-.blueTable .sapUiTableTr > td select {
+/* T\u00FCm h\u00FCcrelerin i\u00E7indeki input ve select bile\u015Fenlerini s\u0131f\u0131rla */
+.blueTable .sapUiTableTr>td .sapMInputBaseContentWrapper,
+.blueTable .sapUiTableTr>td .sapMSelect,
+.blueTable .sapUiTableTr>td .sapMInputBaseInner,
+.blueTable .sapUiTableTr>td input,
+.blueTable .sapUiTableTr>td select {
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
@@ -191,7 +202,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     border-bottom: 2px solid var(--sapPrimaryBlue) !important;
 }
 
-/* ── Badges ── */
+/* \u2500\u2500 Badges \u2500\u2500 */
 .badgeStockGreen {
     background-color: #e5f5e5 !important;
     color: var(--sapSuccessGreen) !important;
@@ -208,7 +219,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     padding: 2px 8px !important;
 }
 
-/* ── Buttons ── */
+/* \u2500\u2500 Buttons \u2500\u2500 */
 .btnPrimary .sapMBtnInner {
     background-color: var(--sapPrimaryBlue) !important;
     border: none !important;
@@ -222,7 +233,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     filter: brightness(1.1) !important;
 }
 
-.btnPrimary .sapMBtnContent, 
+.btnPrimary .sapMBtnContent,
 .btnPrimary .sapUiIcon {
     color: white !important;
     font-weight: 600 !important;
@@ -230,8 +241,8 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 
 .btnOutline .sapMBtnInner {
     border: 1px solid var(--sapBorder) !important;
-    background-color: white !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    background-color: var(--sapSurface) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
@@ -250,7 +261,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 .btnReject .sapMBtnInner {
     border: 1px solid var(--sapErrorRed) !important;
     color: var(--sapErrorRed) !important;
-    background-color: white !important;
+    background-color: var(--sapSurface) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
@@ -263,7 +274,10 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
 .btnReject:hover .sapMBtnContent,
 .btnReject:hover .sapUiIcon {
     color: white !important;
-    border-color: var(--sapErrorRed) !important;
+}
+
+.btnReject .sapUiIcon {
+    color: var(--sapErrorRed) !important;
 }
 
 /* Remove default UI5 focus outline that causes the blue 'box' effect */
@@ -274,7 +288,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     border: none !important;
 }
 
-/* ── Generic Interactive Improvements ── */
+/* \u2500\u2500 Generic Interactive Improvements \u2500\u2500 */
 .sapMBtn:hover .sapUiIcon {
     transform: scale(1.1) !important;
     transition: transform 0.2s ease !important;
@@ -284,7 +298,7 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     background-color: rgba(0, 112, 242, 0.05) !important;
 }
 
-/* ── CSV Dialog ── */
+/* \u2500\u2500 CSV Dialog \u2500\u2500 */
 .csvDialog {
     border-radius: 12px !important;
 }
@@ -304,4 +318,14 @@ body, .sapMText, .sapMTitle, .sapMLabel, .sapMInputBaseInner {
     bottom: 2rem;
     right: 2rem;
     z-index: 100;
+}
+
+.csvStatusOk {
+    color: #188918;
+    font-weight: 600;
+}
+
+.csvStatusError {
+    color: #BB0000;
+    font-weight: 600;
 }

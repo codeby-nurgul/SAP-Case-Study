@@ -22,11 +22,11 @@
                 <ToolbarSpacer />
                 <Button
                     id="themeToggleBtn"
-                    text="{= ${appView>/isDarkMode} ? 'Light Mode' : 'Dark Mode' }"
+                    text="{= ${appView>/isDarkMode} ? ${i18n>toggleLightMode} : ${i18n>toggleDarkMode} }"
                     icon="{= ${appView>/isDarkMode} ? 'sap-icon://light-mode' : 'sap-icon://dark-mode' }"
                     type="Transparent"
                     press=".onThemeToggle"
-                    tooltip="Tema Değiştir"
+                    tooltip="{i18n>toggleDarkMode}"
                 />
             </tnt:ToolHeader>
         </tnt:header>

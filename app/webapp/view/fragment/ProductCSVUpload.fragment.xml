@@ -3,71 +3,67 @@
     xmlns:core="sap.ui.core"
     xmlns:u="sap.ui.unified"
 >
-    <Dialog
-        title="{i18n>csvUploadTitle}"
-        contentWidth="500px"
-        class="csvDialog"
-    >
+    <Dialog title="CSV Upload" contentWidth="520px">
         <content>
             <VBox class="sapUiMediumMargin">
                 <u:FileUploader
                     id="productCSVUploader"
                     fileType="csv"
-                    placeholder="{i18n>csvSelectFile}"
-                    buttonText="Browse"
+                    placeholder="Select a CSV file..."
                     change=".onCSVFileChange"
                     width="100%"
                     class="sapUiSmallMarginBottom"
                 />
 
-                <!-- Info on number of rows after selection (if applicable) -->
-                <Text text="{csvModel>/rowCountText}" visible="{= !!${csvModel>/rowCountText} }" class="heroSubtitle sapUiSmallMarginBottom" />
+                <!-- "dosya.csv (5 rows)" -->
+                <Text
+                    text="{csvModel>/rowCountText}"
+                    visible="{= !!${csvModel>/rowCountText} }"
+                    class="heroSubtitle sapUiSmallMarginBottom"
+                />
 
                 <!-- Validation Checklist -->
-                <VBox visible="{= ${csvModel>/results}.length > 0 }">
-                    <Title text="Validation Results" level="H4" class="cardTitle sapUiSmallMarginBottom" />
-                    <List
-                        items="{csvModel>/results}"
-                        noDataText="No validation run yet"
-                    >
-                        <CustomListItem>
-                            <HBox class="{= ${csvModel>type} === 'Success' ? 'csvRowSuccess' : 'csvRowError' } sapUiSmallMargin" alignItems="Center" justifyContent="SpaceBetween">
-                                <HBox alignItems="Center">
-                                    <core:Icon 
-                                        src="{= ${csvModel>type} === 'Success' ? 'sap-icon://accept' : 'sap-icon://decline' }" 
-                                        color="{= ${csvModel>type} === 'Success' ? '#188918' : '#BB0000' }" 
-                                        class="sapUiSmallMarginEnd" />
-                                    <VBox>
-                                        <Text text="Row {csvModel>row}: {csvModel>name}" class="cardTitle" />
-                                        <Text text="{csvModel>message}" visible="{= ${csvModel>type} !== 'Success' }" class="heroSubtitle" />
-                                    </VBox>
-                                </HBox>
-                                <ObjectStatus 
-                                    text="{= ${csvModel>type} === 'Success' ? 'OK' : 'Error' }" 
-                                    state="{csvModel>type}" />
+                <List items="{csvModel>/results}" showNoData="false" showSeparators="None">
+                    <CustomListItem type="Inactive">
+                        <HBox alignItems="Center" justifyContent="SpaceBetween"
+                              class="sapUiTinyMarginTopBottom sapUiSmallMarginBeginEnd">
+                            <!-- Sol: renkli çizgi + ikon + metin -->
+                            <HBox alignItems="Center">
+                                <core:Icon
+                                    src="{= ${csvModel>type} === 'Success' ? 'sap-icon://accept' : 'sap-icon://decline'}"
+                                    color="{= ${csvModel>type} === 'Success' ? '#188918' : '#BB0000'}"
+                                    size="1rem"
+                                    class="sapUiSmallMarginEnd" />
+                                <VBox>
+                                    <Text text="{csvModel>name}" />
+                                    <Text
+                                        text="{csvModel>message}"
+                                        visible="{= ${csvModel>type} !== 'Success' &amp;&amp; !!${csvModel>message} }"
+                                        class="heroSubtitle" />
+                                </VBox>
                             </HBox>
-                        </CustomListItem>
-                    </List>
-                </VBox>
+                            <!-- Sağ: OK / Error -->
+                            <ObjectStatus
+                                text="{= ${csvModel>type} === 'Success' ? 'OK' : 'Error'}"
+                                state="{= ${csvModel>type} === 'Success' ? 'Success' : 'Error'}" />
+                        </HBox>
+                    </CustomListItem>
+                </List>
 
-                <!-- Hidden legacy strip -->
                 <MessageStrip id="productCSVMessage" visible="false" />
             </VBox>
         </content>
         <beginButton>
             <Button
-                text="{i18n>uploadCSV}"
+                text="CSV Upload"
+                icon="sap-icon://upload"
+                type="Emphasized"
                 press=".onExecuteProductCSVUpload"
-                class="btnPrimary"
                 enabled="{= ${csvModel>/canUpload} }"
             />
         </beginButton>
         <endButton>
-            <Button
-                text="{i18n>cancel}"
-                press=".onCloseCSVDialog"
-                class="btnOutline"
-            />
+            <Button text="Cancel" press=".onCloseCSVDialog" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>

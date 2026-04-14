@@ -60,7 +60,7 @@
                 "type": "sap.ui.model.resource.ResourceModel",
                 "settings": {
                     "bundleName": "product.management.i18n.i18n",
-                    "supportedLocales": ["en", "tr"],
+                    "supportedLocales": ["en", "tr", "de"],
                     "fallbackLocale": "en"
                 }
             },

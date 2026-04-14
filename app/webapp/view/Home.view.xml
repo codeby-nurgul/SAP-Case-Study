@@ -59,7 +59,7 @@
                                                     <HBox alignItems="Center">
                                                         <!-- Stock Badge -->
                                                         <Text
-                                                            text="{= ${stock} &lt; 10 ? 'Low Stock' : 'In Stock' }"
+                                                            text="{= ${stock} &lt; 10 ? ${i18n>lowStock} : ${i18n>inStock} }"
                                                             class="{= ${stock} &lt; 10 ? 'badgeStockOrange' : 'badgeStockGreen' }" />
                                                         <Text text=" • {supplier/name}" class="heroSubtitle sapUiSmallMarginBegin" visible="{= !!${supplier/name} }" />
                                                     </HBox>
