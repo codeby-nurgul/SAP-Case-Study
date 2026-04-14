@@ -1,0 +1,42 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog 
+        id="stockAlertPopover" 
+        title="{i18n>stockAlerts}" 
+        contentWidth="420px" 
+        state="Warning"
+        icon="sap-icon://alert"
+    >
+        <content>
+            <List
+                noDataText="{i18n>noProducts}"
+                items="{stockAlerts>/items}"
+                showSeparators="Inner"
+            >
+                <ObjectListItem
+                    title="{stockAlerts>name}"
+                    number="{stockAlerts>stock}"
+                    numberUnit="{i18n>stockLabel}"
+                    numberState="{= ${stockAlerts>stock} === 0 ? 'Error' : 'Warning' }"
+                    type="Navigation"
+                    press=".onStockAlertItemPress"
+                >
+                    <attributes>
+                        <ObjectAttribute text="{stockAlerts>description}" />
+                    </attributes>
+                    <firstStatus>
+                        <ObjectStatus
+                            text="{= ${stockAlerts>stock} === 0 ? 'Out of Stock' : 'Low Stock' }"
+                            state="{= ${stockAlerts>stock} === 0 ? 'Error' : 'Warning' }"
+                        />
+                    </firstStatus>
+                </ObjectListItem>
+            </List>
+        </content>
+        <beginButton>
+            <Button text="{i18n>close}" press=".onCloseStockAlerts" type="Transparent" />
+        </beginButton>
+    </Dialog>
+</core:FragmentDefinition>

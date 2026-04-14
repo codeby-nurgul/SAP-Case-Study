@@ -111,6 +111,27 @@ body,
     transform: translateY(-4px) !important;
 }
 
+.contentMaxWidth {
+    max-width: 1200px !important;
+    width: 100% !important;
+}
+
+.kpiCard {
+    background-color: var(--sapBackground) !important;
+    border-radius: 8px !important;
+    box-shadow: var(--sapCardShadow) !important;
+    border: none !important;
+    min-width: 200px;
+    text-align: center;
+    flex: 1;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.kpiCard:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) !important;
+}
+
 .cardTitle {
     font-weight: 600 !important;
     font-size: 16px !important;

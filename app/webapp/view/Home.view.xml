@@ -20,9 +20,79 @@
                     <Text text="{i18n>appDescription}" class="heroSubtitle sapUiSmallMarginTop" />
                 </VBox>
 
+                <!-- ═══ KPI CARDS ═══ -->
+                <HBox justifyContent="Center" class="sapUiSmallMarginTop">
+                    <VBox width="100%" class="contentMaxWidth">
+                        <HBox justifyContent="SpaceBetween" class="sapUiMediumMarginBeginEnd sapUiSmallMarginBottom"
+                              wrap="Wrap">
+
+                            <!-- KPI 1: Total Products -->
+                            <Panel class="kpiCard sapUiTinyMargin">
+                                <content>
+                                    <VBox alignItems="Center" class="sapUiSmallMargin">
+                                        <core:Icon
+                                            src="sap-icon://product"
+                                            size="2rem"
+                                            color="#0070F2"
+                                            class="sapUiTinyMarginBottom"
+                                        />
+                                        <Title
+                                            text="{kpiModel>/totalProducts}"
+                                            level="H2"
+                                            class="heroTitle"
+                                        />
+                                        <Text text="{i18n>kpiTotalProducts}" class="heroSubtitle" />
+                                    </VBox>
+                                </content>
+                            </Panel>
+
+                            <!-- KPI 2: Total Suppliers -->
+                            <Panel class="kpiCard sapUiTinyMargin">
+                                <content>
+                                    <VBox alignItems="Center" class="sapUiSmallMargin">
+                                        <core:Icon
+                                            src="sap-icon://supplier"
+                                            size="2rem"
+                                            color="#0070F2"
+                                            class="sapUiTinyMarginBottom"
+                                        />
+                                        <Title
+                                            text="{kpiModel>/totalSuppliers}"
+                                            level="H2"
+                                            class="heroTitle"
+                                        />
+                                        <Text text="{i18n>kpiTotalSuppliers}" class="heroSubtitle" />
+                                    </VBox>
+                                </content>
+                            </Panel>
+
+                            <!-- KPI 3: Low Stock -->
+                            <Panel class="kpiCard sapUiTinyMargin">
+                                <content>
+                                    <VBox alignItems="Center" class="sapUiSmallMargin">
+                                        <core:Icon
+                                            src="sap-icon://warning"
+                                            size="2rem"
+                                            color="#E9730C"
+                                            class="sapUiTinyMarginBottom"
+                                        />
+                                        <Title
+                                            text="{kpiModel>/lowStockCount}"
+                                            level="H2"
+                                            class="heroTitle"
+                                        />
+                                        <Text text="{i18n>kpiLowStock}" class="heroSubtitle" />
+                                    </VBox>
+                                </content>
+                            </Panel>
+
+                        </HBox>
+                    </VBox>
+                </HBox>
+
                 <!-- ═══ DASHBOARD GRID ═══ -->
                 <HBox justifyContent="Center" class="sapUiMediumMargin">
-                    <VBox width="100%" maxWidth="1200px">
+                    <VBox width="100%" class="contentMaxWidth">
 
                         <grid:CSSGrid gridTemplateColumns="repeat(auto-fit, minmax(400px, 1fr))" gridGap="1.5rem">
 

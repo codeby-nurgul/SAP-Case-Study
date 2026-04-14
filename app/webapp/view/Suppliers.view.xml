@@ -91,6 +91,16 @@
                                             <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>
                                     </Button>
+                                    <Button
+                                        text="{i18n>exportCSV}"
+                                        icon="sap-icon://download"
+                                        press=".onExportCSV"
+                                        class="btnOutline"
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData priority="Low" />
+                                        </layoutData>
+                                    </Button>
                                     <!-- FIX: AlwaysOverflow → Low
                                          Geniş ekranda (OneColumn) görünür,
                                          TwoColumns layout'ta toolbar daraldığında overflow menüye gider -->

@@ -108,7 +108,7 @@ module.exports = class ProductService extends cds.ApplicationService {
         // Define expected columns per entity type
         const columnMap = {
             product:  { name: 'name', description: 'description', price: 'price', stock: 'stock', currency: 'currency' },
-            supplier: { name: 'name', email: 'email', phone: 'phone', address: 'address' }
+            supplier: { name: 'name', email: 'email', phone: 'phone', address: 'address', city: 'city', country: 'country' }
         };
 
         const expectedCols = columnMap[type];

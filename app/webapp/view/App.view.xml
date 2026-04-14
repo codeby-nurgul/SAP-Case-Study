@@ -2,6 +2,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:tnt="sap.tnt"
+    xmlns:bd="sap.m"
     controllerName="product.management.controller.App"
     displayBlock="true"
 >
@@ -20,6 +21,20 @@
                 />
                 <Title text="{i18n>appTitle}" level="H4" />
                 <ToolbarSpacer />
+                <Button
+                    id="stockAlertBtn"
+                    icon="sap-icon://alert"
+                    type="Transparent"
+                    press=".onOpenStockAlerts"
+                    tooltip="{i18n>stockAlerts}"
+                >
+                    <customData>
+                        <BadgeCustomData
+                            value="{appView>/lowStockBadge}"
+                            visible="{= ${appView>/lowStockCount} > 0 }"
+                        />
+                    </customData>
+                </Button>
                 <Button
                     id="themeToggleBtn"
                     text="{= ${appView>/isDarkMode} ? ${i18n>toggleLightMode} : ${i18n>toggleDarkMode} }"

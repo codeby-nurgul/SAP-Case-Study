@@ -224,6 +224,54 @@ sap.ui.define([
             MessageToast.show(this.getResourceBundle().getText("changesCancelled"));
         },
 
+        /**
+         * Client-side CSV export for the products table.
+         * Uses RFC 4180 compliant escaping (quoting fields with commas, quotes, or newlines).
+         */
+        onExportCSV: function () {
+            var oBundle = this.getResourceBundle();
+            var oBinding = this.byId("productsTable").getBinding("rows");
+            var aContexts = oBinding.getCurrentContexts();
+
+            if (!aContexts || aContexts.length === 0) {
+                MessageToast.show(oBundle.getText("noDataToExport"));
+                return;
+            }
+
+            // RFC 4180: quote the field if it contains a comma, quote, or newline
+            var fnEscape = function (val) {
+                var s = (val !== undefined && val !== null) ? String(val) : "";
+                if (s.indexOf(",") !== -1 || s.indexOf('"') !== -1 || s.indexOf("\n") !== -1) {
+                    s = '"' + s.replace(/"/g, '""') + '"';
+                }
+                return s;
+            };
+
+            var aRows = aContexts.map(function (oCtx) {
+                var o = oCtx.getObject();
+                return [
+                    fnEscape(o.name),
+                    fnEscape(o.description),
+                    fnEscape(o.price),
+                    fnEscape(o.currency),
+                    fnEscape(o.stock)
+                ].join(",");
+            });
+
+            var sCSV = "Name,Description,Price,Currency,Stock\n" + aRows.join("\n");
+            var oBlob = new Blob(["\uFEFF" + sCSV], { type: "text/csv;charset=utf-8;" });
+            var sUrl = URL.createObjectURL(oBlob);
+            var oLink = document.createElement("a");
+            oLink.href = sUrl;
+            oLink.download = "products_export.csv";
+            document.body.appendChild(oLink);
+            oLink.click();
+            document.body.removeChild(oLink);
+            URL.revokeObjectURL(sUrl);
+
+            MessageToast.show(oBundle.getText("exportSuccess"));
+        },
+
         /* ═══════════════════════════════════════════════
          *  SEARCH
          * ═══════════════════════════════════════════════ */

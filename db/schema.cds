@@ -25,5 +25,7 @@ entity Suppliers : cuid, managed {
     email    : String(100) @mandatory;
     phone    : String(20);
     address  : String(200);
+    city     : String(100);
+    country  : String(100);
     products : Association to many Products on products.supplier = $self;
 }
