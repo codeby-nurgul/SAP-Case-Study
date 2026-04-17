@@ -82,7 +82,7 @@ body,
 /* \u2500\u2500 Home Page Styles \u2500\u2500 */
 .heroSection {
     padding: 3rem 2rem;
-    background-color: #fbfcfd;
+    background-color: var(--sapSurface) !important;
     text-align: center;
 }
 
@@ -186,7 +186,7 @@ body,
 /* Satıra hover efekti */
 .blueTable .sapUiTableTr:hover,
 .blueTable .sapUiTableTr:hover>td {
-    background-color: #F8FBFE !important;
+    background-color: var(--sapHoverBg) !important;
 }
 
 /* Bo\u015F sat\u0131rlar\u0131 tamamen gizle */

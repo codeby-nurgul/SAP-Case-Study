@@ -21,7 +21,7 @@
                     <TextArea value="{description}" rows="3" width="100%" />
 
                     <!-- Price -->
-                    <Label text="{i18n>productPrice}" required="true" />
+                    <Label text="{i18n>productPrice}" />
                     <HBox alignItems="Center">
                         <Input
                             value="{
@@ -36,7 +36,7 @@
                     </HBox>
 
                     <!-- Stock -->
-                    <Label text="{i18n>productStock}" required="true" />
+                    <Label text="{i18n>productStock}" />
                     <StepInput value="{stock}" min="0" width="10rem" />
 
                     <!-- Supplier -->

@@ -187,6 +187,7 @@
         <f:midColumnPages>
             <Page id="supplierDetailPage" title="{i18n>supplierDetail}">
                 <headerContent>
+                    <Button icon="sap-icon://edit"         press=".onEditDetail"             tooltip="Edit Supplier" type="Transparent" />
                     <Button icon="sap-icon://full-screen"  press=".onToggleDetailFullScreen" tooltip="Full Screen" />
                     <Button icon="sap-icon://decline"      press=".onCloseDetail"            tooltip="{i18n>close}" />
                 </headerContent>

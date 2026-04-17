@@ -471,6 +471,62 @@ sap.ui.define([
             }
         },
 
+        /**
+         * Edit Pop-up açar — Detay sayfası başlığındaki "Düzenle" butonu.
+         */
+        onEditDetail: function () {
+            var oContext = this.byId("supplierDetailPage").getBindingContext();
+            if (!this._pEditDialog) {
+                this._pEditDialog = Fragment.load({
+                    id: this.getView().getId(),
+                    name: "product.management.view.fragment.SupplierEditDialog",
+                    controller: this
+                }).then(function (oDialog) {
+                    this.getView().addDependent(oDialog);
+                    return oDialog;
+                }.bind(this));
+            }
+
+            this._pEditDialog.then(function (oDialog) {
+                oDialog.setBindingContext(oContext);
+                oDialog.open();
+            });
+        },
+
+        /**
+         * Edit Pop-up içindeki "Kaydet" butonu.
+         */
+        onSaveEditDialog: function () {
+            var oDialog = this.byId("supplierEditDialog");
+            var oContext = oDialog.getBindingContext();
+
+            // 1. Perform same local validation as table
+            var aErrors = this._validateSupplierContext(oContext);
+            if (aErrors.length > 0) {
+                MessageBox.error(aErrors[0]);
+                return;
+            }
+
+            // 2. Close dialog
+            oDialog.close();
+
+            // 3. 🚀 CRITICAL: Trigger global save to commit to backend and clear pending changes
+            this.onSaveChanges();
+        },
+
+        /**
+         * Edit Pop-up içindeki "İptal" butonu.
+         */
+        onCancelEditDialog: function () {
+            this._pEditDialog.then(function (oDialog) {
+                var oContext = oDialog.getBindingContext();
+                if (oContext.hasPendingChanges()) {
+                    oContext.resetChanges();
+                }
+                oDialog.close();
+            });
+        },
+
         _showDetail: function (oContext) {
             var oDetailPage = this.byId("supplierDetailPage");
 
@@ -737,29 +793,42 @@ sap.ui.define([
             var oBinding = this.byId("suppliersTable").getBinding("rows");
             var aContexts = oBinding.getCurrentContexts();
             var aErrors = [];
-            var oBundle = this.getResourceBundle();
 
             aContexts.forEach(function (oContext) {
                 if (oContext.hasPendingChanges() || oContext.isTransient()) {
-                    var sName  = oContext.getProperty("name");
-                    var sEmail = oContext.getProperty("email");
-
-                    if (!sName || sName.toString().trim() === "") {
-                        aErrors.push(oBundle.getText("nameRequired"));
-                    }
-
-                    if (!sEmail || sEmail.toString().trim() === "") {
-                        aErrors.push(oBundle.getText("emailRequired"));
-                    } else if (!EMAIL_REGEX.test(sEmail)) {
-                        aErrors.push(oBundle.getText("emailInvalid"));
-                    }
+                    var aRowErrors = this._validateSupplierContext(oContext);
+                    aErrors = aErrors.concat(aRowErrors);
                 }
-            });
+            }.bind(this));
 
             // Remove duplicate messages
-            return aErrors.filter(function (sErr, iIdx, aArr) {
-                return aArr.indexOf(sErr) === iIdx;
-            });
+            return [...new Set(aErrors)];
+        },
+
+        /**
+         * Shared validation logic for a single supplier context.
+         * Used by both table batch save and detail edit popup.
+         */
+        _validateSupplierContext: function (oContext) {
+            var aErrors = [];
+            var oBundle = this.getResourceBundle();
+
+            var sName  = oContext.getProperty("name");
+            var sEmail = oContext.getProperty("email");
+
+            // Name is mandatory
+            if (!sName || sName.toString().trim() === "") {
+                aErrors.push(oBundle.getText("nameRequired"));
+            }
+
+            // Email format (OData V4 automatically handles basic types, but we add custom regex here)
+            if (!sEmail || sEmail.toString().trim() === "") {
+                aErrors.push(oBundle.getText("emailRequired"));
+            } else if (!EMAIL_REGEX.test(sEmail)) {
+                aErrors.push(oBundle.getText("emailInvalid"));
+            }
+
+            return aErrors;
         },
 
         /* ═══════════════════════════════════════════════

@@ -313,10 +313,21 @@ sap.ui.define([
          * OData V4 auto-expand/batch mantığıyla çalışır.
          */
         onSaveEditDialog: function () {
-            this._pEditDialog.then(function (oDialog) {
-                oDialog.close();
-                MessageToast.show(this.getResourceBundle().getText("saveSuccess") || "Değişiklikler uygulandı");
-            }.bind(this));
+            var oDialog = this.byId("productEditDialog");
+            var oContext = oDialog.getBindingContext();
+
+            // 1. Perform same local validation as table
+            var aErrors = this._validateProductContext(oContext);
+            if (aErrors.length > 0) {
+                MessageBox.error(aErrors[0]);
+                return;
+            }
+
+            // 2. Close dialog
+            oDialog.close();
+
+            // 3. 🚀 CRITICAL: Trigger global save to commit to backend and clear pending changes
+            this.onSaveChanges();
         },
 
         /**
@@ -914,43 +925,63 @@ sap.ui.define([
          *  CLIENT-SIDE VALIDATION
          * ═══════════════════════════════════════════════ */
 
-        /**
-         * Validate all rows with pending changes before batch submit.
-         * Returns an array of error messages. Empty array = valid.
-         */
         _validateBeforeSave: function () {
             var oBinding = this.byId("productsTable").getBinding("rows");
             var aContexts = oBinding.getCurrentContexts();
             var aErrors = [];
-            var oBundle = this.getResourceBundle();
 
             aContexts.forEach(function (oContext) {
                 if (oContext.hasPendingChanges() || oContext.isTransient()) {
-                    var sName = oContext.getProperty("name");
-                    var nPrice = oContext.getProperty("price");
-                    var nStock = oContext.getProperty("stock");
-
-                    var sCurrency = oContext.getProperty("currency");
-
-                    if (!sName || sName.toString().trim() === "") {
-                        aErrors.push(oBundle.getText("nameRequired"));
-                    }
-                    if (!sCurrency || sCurrency.toString().trim() === "") {
-                        aErrors.push(oBundle.getText("currencyRequired"));
-                    }
-                    if (nPrice !== null && nPrice !== undefined && parseFloat(nPrice) < 0) {
-                        aErrors.push(oBundle.getText("priceNegative"));
-                    }
-                    if (nStock !== null && nStock !== undefined && parseInt(nStock, 10) < 0) {
-                        aErrors.push(oBundle.getText("stockNegative"));
-                    }
+                    var aRowErrors = this._validateProductContext(oContext);
+                    aErrors = aErrors.concat(aRowErrors);
                 }
-            });
+            }.bind(this));
 
             // Remove duplicate messages
-            return aErrors.filter(function (sErr, iIdx, aArr) {
-                return aArr.indexOf(sErr) === iIdx;
-            });
+            return [...new Set(aErrors)];
+        },
+
+        /**
+         * Shared validation logic for a single product context.
+         * Used by both table batch save and detail edit popup.
+         */
+        _validateProductContext: function (oContext) {
+            var aErrors = [];
+            var oBundle = this.getResourceBundle();
+
+            var sName = oContext.getProperty("name");
+            var sCurrency = oContext.getProperty("currency");
+            var nPrice = oContext.getProperty("price");
+            var nStock = oContext.getProperty("stock");
+
+            // Name is mandatory
+            if (!sName || sName.toString().trim() === "") {
+                aErrors.push(oBundle.getText("nameRequired"));
+            }
+
+            // Currency is mandatory
+            if (!sCurrency || sCurrency.toString().trim() === "") {
+                aErrors.push(oBundle.getText("currencyRequired"));
+            }
+
+            // Price must be positive if provided
+            if (nPrice !== null && nPrice !== undefined && parseFloat(nPrice) < 0) {
+                aErrors.push(oBundle.getText("priceNegative"));
+            }
+
+            // Stock must be positive if provided
+            if (nStock !== null && nStock !== undefined && parseInt(nStock, 10) < 0) {
+                aErrors.push(oBundle.getText("stockNegative"));
+            }
+
+            return aErrors;
+        },
+
+        /**
+         * Return unique error messages after validating all rows.
+         */
+        _getUniqueErrors: function (aErrors) {
+             return [...new Set(aErrors)];
         },
 
         /* ═══════════════════════════════════════════════
