@@ -140,7 +140,7 @@
                                                     </HBox>
                                                 </VBox>
                                                 <VBox alignItems="End">
-                                                    <Title text="{price}" level="H3" class="heroTitle" />
+                                                    <ObjectNumber number="{price}" unit="{currency}" emphasized="false" class="heroTitle" />
                                                 </VBox>
                                             </HBox>
                                         </CustomListItem>

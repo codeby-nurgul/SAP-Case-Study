@@ -35,6 +35,7 @@
                         />
                     </customData>
                 </Button>
+
                 <Button
                     id="themeToggleBtn"
                     text="{= ${appView>/isDarkMode} ? ${i18n>toggleLightMode} : ${i18n>toggleDarkMode} }"

@@ -179,8 +179,8 @@ body,
 
 /* Y\u00FCksekli\u011Fi i\u00E7eri\u011Fe uydurma */
 .blueTable .sapUiTableCCnt {
-    height: auto !important;
-    min-height: auto !important;
+    /* height: auto !important; */
+    /* min-height: auto !important; */
 }
 
 .blueTable .sapUiTableTr {
@@ -195,9 +195,9 @@ body,
 }
 
 /* Bo\u015F sat\u0131rlar\u0131 tamamen gizle */
-.blueTable .sapUiTableEmptyRow {
+/* .blueTable .sapUiTableEmptyRow {
     display: none !important;
-}
+} */
 
 /* Edit Mode Accent */
 .editingRow {

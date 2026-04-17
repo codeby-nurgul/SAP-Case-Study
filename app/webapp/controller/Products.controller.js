@@ -351,10 +351,21 @@ sap.ui.define([
             var aConditions = oFilterModel.getProperty("/conditions");
             var bAnd = oFilterModel.getProperty("/logicIndex") === 0;
 
+            var aNumericFields = ["price", "stock"];
+
             var aFilters = [];
             aConditions.forEach(function (oCond) {
                 if (oCond.value && oCond.value.trim() !== "") {
-                    aFilters.push(new Filter(oCond.field, oCond.operator, oCond.value));
+                    var sOp = oCond.operator;
+                    var vValue = oCond.value;
+
+                    // Numeric field için Contains desteklenmiyor → EQ'ya düşür
+                    if (aNumericFields.indexOf(oCond.field) !== -1) {
+                        if (sOp === "Contains") { sOp = "EQ"; }
+                        vValue = parseFloat(oCond.value); // number'a çevir
+                    }
+
+                    aFilters.push(new Filter(oCond.field, sOp, vValue));
                 }
             });
 
@@ -715,6 +726,11 @@ sap.ui.define([
                     MessageToast.show(oBundle.getText("csvUploadSuccess", [oResult.success]));
                     // Refresh table to show newly imported rows
                     this.byId("productsTable").getBinding("rows").refresh();
+
+                    // ⭐ Success durumunda dialog'u kapat
+                    setTimeout(function () {
+                        this.onCloseCSVDialog();
+                    }.bind(this), 1500);
                 } else {
                     oCSVModel.setProperty("/canUpload", true); // Let them try again if there were errors
                 }

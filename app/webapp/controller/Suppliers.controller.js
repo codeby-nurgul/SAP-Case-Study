@@ -661,6 +661,11 @@ sap.ui.define([
                 if (oResult.failed === 0) {
                      MessageToast.show(oBundle.getText("csvUploadSuccess", [oResult.success]));
                      this.byId("suppliersTable").getBinding("rows").refresh();
+
+                     // ⭐ Success durumunda dialog'u kapat
+                     setTimeout(function () {
+                         this.onCloseCSVDialog();
+                     }.bind(this), 1500);
                 } else {
                      oCSVModel.setProperty("/canUpload", true);
                 }

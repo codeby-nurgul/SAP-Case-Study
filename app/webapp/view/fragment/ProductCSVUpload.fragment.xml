@@ -3,7 +3,7 @@
     xmlns:core="sap.ui.core"
     xmlns:u="sap.ui.unified"
 >
-    <Dialog title="CSV Upload" contentWidth="520px">
+    <Dialog title="{i18n>csvUploadTitle}" contentWidth="520px">
         <content>
             <VBox class="sapUiMediumMargin">
                 <u:FileUploader
@@ -55,7 +55,7 @@
         </content>
         <beginButton>
             <Button
-                text="CSV Upload"
+                text="{i18n>uploadCSV}"
                 icon="sap-icon://upload"
                 type="Emphasized"
                 press=".onExecuteProductCSVUpload"
@@ -63,7 +63,7 @@
             />
         </beginButton>
         <endButton>
-            <Button text="Cancel" press=".onCloseCSVDialog" />
+            <Button text="{i18n>cancel}" press=".onCloseCSVDialog" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>
