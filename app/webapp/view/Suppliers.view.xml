@@ -43,7 +43,7 @@
                             rowSelectionChange=".onRowSelectionChange"
                             sort=".onSort"
                             visibleRowCountMode="Auto"
-                            minAutoRowCount="5"
+                            minAutoRowCount="8"
                             enableSelectAll="true"
                             rowHeight="48"
                         >

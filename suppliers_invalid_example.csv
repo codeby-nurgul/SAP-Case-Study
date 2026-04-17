@@ -1,0 +1,5 @@
+name,email,phone,address,city,country
+,Missing name should fail validation,1234567,Some Address,London,UK
+Invalid Email Supplier,this-is-not-an-email,+1234567,New York,USA
+Empty Email Supplier,,+9876543,Ankara,Turkey
+Valid Supplier,valid@email.com,111222,Istanbul,Turkey

@@ -1,0 +1,5 @@
+name,description,price,stock,currency
+,Missing name should fail validation,100.00,10,TRY
+Invalid Price Product,Price cannot be negative,-50.00,5,TRY
+Invalid Stock Product,Stock cannot be negative,500.00,-1,TRY
+Valid Product,But overall file is invalid due to rows above,10.00,100,TRY
