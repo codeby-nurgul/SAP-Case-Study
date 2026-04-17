@@ -29,6 +29,12 @@ sap.ui.define([
             });
             this.setModel(oFilterModel, "filterModel");
 
+            // Filter state for additive search
+            this._aAdvancedFilters = [];
+            this._oSearchFilter = null;
+            this._sSearchQuery = "";
+            this._bFilterLogicIsAnd = true;
+
             // JSON model for CSV validation state
             var oCSVModel = new JSONModel({
                 rowCountText: "",
@@ -249,23 +255,24 @@ sap.ui.define([
 
         /**
          * Search across name & email columns (OR logic).
+         * Now additive to advanced filters.
          */
         onSearch: function (oEvent) {
             var sQuery = oEvent.getParameter("query") || oEvent.getParameter("newValue") || "";
-            var oBinding = this.byId("suppliersTable").getBinding("rows");
-            var aFilters = [];
+            this._sSearchQuery = sQuery;
 
+            this._oSearchFilter = null;
             if (sQuery) {
-                aFilters.push(new Filter({
+                this._oSearchFilter = new Filter({
                     filters: [
                         new Filter("name", FilterOperator.Contains, sQuery),
                         new Filter("email", FilterOperator.Contains, sQuery)
                     ],
                     and: false
-                }));
+                });
             }
 
-            oBinding.filter(aFilters);
+            this._applyCombinedFilters("suppliersTable");
         },
 
         /* ═══════════════════════════════════════════════
@@ -307,6 +314,10 @@ sap.ui.define([
             }
         },
 
+        /**
+         * Build OData V4 filters from dialog conditions and apply.
+         * Now additive to search.
+         */
         onApplyFilters: function () {
             var oFilterModel = this.getModel("filterModel");
             var aConditions = oFilterModel.getProperty("/conditions");
@@ -319,18 +330,17 @@ sap.ui.define([
                 }
             });
 
-            var oBinding = this.byId("suppliersTable").getBinding("rows");
-            if (aFilters.length > 0) {
-                oBinding.filter(new Filter({ filters: aFilters, and: bAnd }));
-            } else {
-                oBinding.filter([]);
-            }
+            this._aAdvancedFilters = aFilters;
+            this._bFilterLogicIsAnd = bAnd;
+
+            this._applyCombinedFilters("suppliersTable");
 
             this._pFilterDialog.then(function (oDialog) {
                 oDialog.close();
             });
         },
 
+        /** Reset all filters AND search bar */
         onClearFilters: function () {
             this.getModel("filterModel").setProperty("/conditions", [
                 { field: "name", operator: "Contains", value: "" }
@@ -397,22 +407,45 @@ sap.ui.define([
             }
         },
 
-        /**
-         * Action icon (Pencil) press -> select row and open detail with toast
-         */
         onEditRow: function (oEvent) {
-            var oContext = oEvent.getSource().getBindingContext();
-            this._showDetail(oContext);
-            
-            // Sync selection in table
-            var oTable = this.byId("suppliersTable");
-            var aContexts = oTable.getBinding("rows").getContexts();
-            var iIndex = aContexts.indexOf(oContext);
-            if (iIndex !== -1) {
-                oTable.setSelectedIndex(iIndex);
+            var oButton  = oEvent.getSource();
+            var oContext = oButton.getBindingContext();
+            var oTable   = this.byId("suppliersTable");
+
+            // 1) Önceki highlight'ı temizle
+            oTable.$().find("tr.sapUiTableTr.editHighlightRow").removeClass("editHighlightRow");
+
+            // 2) Bu satıra highlight class'ı ekle
+            var $row = oButton.$().closest("tr.sapUiTableTr");
+            if ($row.length) {
+                $row.addClass("editHighlightRow");
             }
-            
-            MessageToast.show(this.getResourceBundle().getText("editModeActive") || "Edit mode active");
+
+            // 3) Checkbox'ı işaretle (UI5 selection API)
+            this._bSkipSelectionDetail = true;
+
+            var aContexts = oTable.getBinding("rows").getContexts();
+            var iIndex    = aContexts.indexOf(oContext);
+            if (iIndex !== -1) {
+                // Diğer seçimleri koru, sadece bu satırı ekle
+                oTable.addSelectionInterval(iIndex, iIndex);
+            }
+
+            // 4) İlk Input'a focus + select
+            setTimeout(function () {
+                if ($row.length) {
+                    var $firstInput = $row.find("input.sapMInputBaseInner").first();
+                    if ($firstInput.length) {
+                        $firstInput.trigger("focus").trigger("select");
+                    }
+                }
+                // Flag'i sıfırla
+                this._bSkipSelectionDetail = false;
+            }.bind(this), 0);
+
+            MessageToast.show(
+                this.getResourceBundle().getText("editModeActive") || "Düzenleme modu aktif"
+            );
         },
 
         /**
@@ -420,6 +453,10 @@ sap.ui.define([
          * Binds with $expand=products to load related products.
          */
         onRowSelectionChange: function () {
+            if (this._bSkipSelectionDetail) {
+                return;
+            }
+
             var oTable = this.byId("suppliersTable");
             var iIndex = oTable.getSelectedIndex();
 

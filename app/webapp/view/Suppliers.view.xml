@@ -116,7 +116,11 @@
                                         </layoutData>
                                     </Button>
                                 </OverflowToolbar>
+                                <OverflowToolbar id="filterInfoToolbar" visible="false" style="Clear">
+                                    <Label id="filterInfoText" text="" class="sapUiSmallMarginBegin" />
+                                </OverflowToolbar>
                             </t:extension>
+
 
                             <!-- ── TABLE COLUMNS ── -->
                             <t:Column sortProperty="name" filterProperty="name">

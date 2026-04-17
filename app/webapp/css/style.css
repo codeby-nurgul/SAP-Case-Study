@@ -223,6 +223,45 @@ body,
     border-bottom: 2px solid var(--sapPrimaryBlue) !important;
 }
 
+/* ═══════════════════════════════════════════════
+ * sap.ui.table.Table — ROW HIGHLIGHT (CUSTOM CLASS)
+ * ═══════════════════════════════════════════════ */
+
+.blueTable .sapUiTableTr.editHighlightRow,
+.blueTable .sapUiTableTr.editHighlightRow > td {
+    background-color: #E8F4FD !important;
+}
+
+.blueTable .sapUiTableTr.editHighlightRow {
+    position: relative !important;
+}
+
+.blueTable .sapUiTableTr.editHighlightRow::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 4px !important;
+    background-color: var(--sapPrimaryBlue) !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+}
+
+.blueTable .sapUiTableTr:not(.editHighlightRow):hover,
+.blueTable .sapUiTableTr:not(.editHighlightRow):hover > td {
+    background-color: #F5FAFE !important;
+}
+
+.blueTable .sapUiTableTr > td .editInput.sapMInputBaseHasFocus .sapMInputBaseContentWrapper,
+.blueTable .sapUiTableTr > td .editInput:focus-within .sapMInputBaseContentWrapper,
+.blueTable .sapUiTableTr > td .sapMInputFocused .sapMInputBaseContentWrapper {
+    border: 1px solid var(--sapPrimaryBlue) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 0 1px var(--sapPrimaryBlue) !important;
+    background-color: #FFFFFF !important;
+}
+
 /* \u2500\u2500 Badges \u2500\u2500 */
 .badgeStockGreen {
     background-color: #e5f5e5 !important;

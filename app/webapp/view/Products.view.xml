@@ -119,7 +119,11 @@
                                         </layoutData>
                                     </Button>
                                 </OverflowToolbar>
+                                <OverflowToolbar id="filterInfoToolbar" visible="false" style="Clear">
+                                    <Label id="filterInfoText" text="" class="sapUiSmallMarginBegin" />
+                                </OverflowToolbar>
                             </t:extension>
+
 
                             <!-- ── TABLE COLUMNS ── -->
                             <t:columns>
@@ -164,7 +168,7 @@
                                 <t:Column>
                                     <Label text="{i18n>currency}" />
                                     <t:template>
-                                        <Text text="{currency}" />
+                                        <Input value="{currency}" maxLength="3" valueLiveUpdate="true" class="editInput" />
                                     </t:template>
                                 </t:Column>
 

@@ -73,6 +73,13 @@
                 }
             }
         },
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
 
         "rootView": {
             "viewName": "product.management.view.App",

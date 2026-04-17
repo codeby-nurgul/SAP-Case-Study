@@ -30,6 +30,12 @@ sap.ui.define([
             });
             this.setModel(oFilterModel, "filterModel");
 
+            // Filter state for additive search
+            this._aAdvancedFilters = [];
+            this._oSearchFilter = null;
+            this._sSearchQuery = "";
+            this._bFilterLogicIsAnd = true;
+
             // JSON model for CSV validation state
             var oCSVModel = new JSONModel({
                 rowCountText: "",
@@ -124,7 +130,8 @@ sap.ui.define([
                 name: "",
                 description: "",
                 price: 0.00,
-                stock: 0
+                stock: 0,
+                currency: "TRY"
             });
             // Scroll to top
             oTable.setFirstVisibleRow(0);
@@ -279,22 +286,26 @@ sap.ui.define([
         /**
          * Live search across name & description columns (OR logic).
          */
+        /**
+         * Live search across name & description columns (OR logic).
+         * Now additive to advanced filters.
+         */
         onSearch: function (oEvent) {
             var sQuery = oEvent.getParameter("query") || oEvent.getParameter("newValue") || "";
-            var oBinding = this.byId("productsTable").getBinding("rows");
-            var aFilters = [];
+            this._sSearchQuery = sQuery;
 
+            this._oSearchFilter = null;
             if (sQuery) {
-                aFilters.push(new Filter({
+                this._oSearchFilter = new Filter({
                     filters: [
                         new Filter("name", FilterOperator.Contains, sQuery),
                         new Filter("description", FilterOperator.Contains, sQuery)
                     ],
-                    and: false   // OR — match either name or description
-                }));
+                    and: false
+                });
             }
 
-            oBinding.filter(aFilters);
+            this._applyCombinedFilters("productsTable");
         },
 
         /* ═══════════════════════════════════════════════
@@ -344,7 +355,7 @@ sap.ui.define([
 
         /**
          * Build OData V4 filters from dialog conditions and apply.
-         * Supports dynamic AND/OR logic between conditions.
+         * Now additive to search.
          */
         onApplyFilters: function () {
             var oFilterModel = this.getModel("filterModel");
@@ -352,45 +363,102 @@ sap.ui.define([
             var bAnd = oFilterModel.getProperty("/logicIndex") === 0;
 
             var aNumericFields = ["price", "stock"];
-
             var aFilters = [];
+
             aConditions.forEach(function (oCond) {
                 if (oCond.value && oCond.value.trim() !== "") {
                     var sOp = oCond.operator;
                     var vValue = oCond.value;
-
-                    // Numeric field için Contains desteklenmiyor → EQ'ya düşür
                     if (aNumericFields.indexOf(oCond.field) !== -1) {
                         if (sOp === "Contains") { sOp = "EQ"; }
-                        vValue = parseFloat(oCond.value); // number'a çevir
+                        vValue = parseFloat(oCond.value);
                     }
-
                     aFilters.push(new Filter(oCond.field, sOp, vValue));
                 }
             });
 
-            var oBinding = this.byId("productsTable").getBinding("rows");
-            if (aFilters.length > 0) {
-                oBinding.filter(new Filter({ filters: aFilters, and: bAnd }));
-            } else {
-                oBinding.filter([]);
-            }
+            this._aAdvancedFilters = aFilters;
+            this._bFilterLogicIsAnd = bAnd;
+
+            this._applyCombinedFilters("productsTable");
 
             this._pFilterDialog.then(function (oDialog) {
                 oDialog.close();
             });
         },
 
-        /** Reset all filters and close dialog */
+        /** Reset all filters AND search bar */
         onClearFilters: function () {
+            // 1) Clear Model
             this.getModel("filterModel").setProperty("/conditions", [
                 { field: "name", operator: "Contains", value: "" }
             ]);
             this.getModel("filterModel").setProperty("/logicIndex", 0);
-            this.byId("productsTable").getBinding("rows").filter([]);
+
+            // 2) Clear Internal State
+            this._aAdvancedFilters = [];
+            this._oSearchFilter = null;
+            this._sSearchQuery = "";
+
+            // 3) Clear Search Field UI
+            var oSearchField = this.byId("productsSearch");
+            if (oSearchField) { oSearchField.setValue(""); }
+
+            // 4) Apply
+            this._applyCombinedFilters("productsTable");
+
             this._pFilterDialog.then(function (oDialog) {
                 oDialog.close();
             });
+        },
+
+        /**
+         * Merges Search and Advanced Filters with AND logic.
+         * Updates the visual filter status indicator.
+         */
+        _applyCombinedFilters: function (sTableId) {
+            var aOverallFilters = [];
+            var oBundle = this.getResourceBundle();
+            var sStatusText = "";
+
+            // 1) Add Advanced Filters
+            if (this._aAdvancedFilters && this._aAdvancedFilters.length > 0) {
+                aOverallFilters.push(new Filter({
+                    filters: this._aAdvancedFilters,
+                    and: this._bFilterLogicIsAnd
+                }));
+                sStatusText = oBundle.getText("activeFiltersInfo", [this._aAdvancedFilters.length]);
+            }
+
+            // 2) Add Search Filter
+            if (this._oSearchFilter) {
+                aOverallFilters.push(this._oSearchFilter);
+                if (sStatusText) {
+                    sStatusText = oBundle.getText("filterCombined", [this._aAdvancedFilters.length]);
+                } else {
+                    sStatusText = oBundle.getText("searchInfo", [this._sSearchQuery]);
+                }
+            }
+
+            // 3) Apply to Table
+            var oBinding = this.byId(sTableId).getBinding("rows");
+            if (aOverallFilters.length > 0) {
+                oBinding.filter(new Filter({ filters: aOverallFilters, and: true }));
+            } else {
+                oBinding.filter([]);
+            }
+
+            // 4) Update Visual Indicator
+            var oInfoToolbar = this.byId("filterInfoToolbar");
+            var oInfoText = this.byId("filterInfoText");
+            if (oInfoToolbar && oInfoText) {
+                if (sStatusText) {
+                    oInfoText.setText(oBundle.getText("filterStatus", [sStatusText]));
+                    oInfoToolbar.setVisible(true);
+                } else {
+                    oInfoToolbar.setVisible(false);
+                }
+            }
         },
 
         /** Close filter dialog without applying */
@@ -461,28 +529,62 @@ sap.ui.define([
         },
 
         /**
-         * Open detail panel when clicking the Edit icon (pencil) in a table row.
+         * Edit butonu (kalem): satırı vurgular + checkbox'ı işaretler + ilk Input'a focus verir.
+         * Detay paneli AÇMAZ.
          */
         onEditRow: function (oEvent) {
-            var oContext = oEvent.getSource().getBindingContext();
-            this._showDetail(oContext);
+            var oButton  = oEvent.getSource();
+            var oContext = oButton.getBindingContext();
+            var oTable   = this.byId("productsTable");
 
-            // Sync selection in table
-            var oTable = this.byId("productsTable");
-            var aContexts = oTable.getBinding("rows").getContexts();
-            var iIndex = aContexts.indexOf(oContext);
-            if (iIndex !== -1) {
-                oTable.setSelectedIndex(iIndex);
+            // 1) Önceki highlight'ı temizle
+            oTable.$().find("tr.sapUiTableTr.editHighlightRow").removeClass("editHighlightRow");
+
+            // 2) Bu satıra highlight class'ı ekle
+            var $row = oButton.$().closest("tr.sapUiTableTr");
+            if ($row.length) {
+                $row.addClass("editHighlightRow");
             }
 
-            MessageToast.show(this.getResourceBundle().getText("editModeActive") || "Edit mode active");
+            // 3) Checkbox'ı işaretle (UI5 selection API)
+            // Detay panelinin açılmasını önlemek için flag'i önce set et
+            this._bSkipSelectionDetail = true;
+            
+            var aContexts = oTable.getBinding("rows").getContexts();
+            var iIndex    = aContexts.indexOf(oContext);
+            if (iIndex !== -1) {
+                // Diğer seçimleri koru, sadece bu satırı ekle
+                oTable.addSelectionInterval(iIndex, iIndex);
+            }
+
+            // 4) İlk Input'a focus + select
+            setTimeout(function () {
+                if ($row.length) {
+                    var $firstInput = $row.find("input.sapMInputBaseInner").first();
+                    if ($firstInput.length) {
+                        $firstInput.trigger("focus").trigger("select");
+                    }
+                }
+                // Flag'i sıfırla — sonraki kullanıcı seçimleri normal çalışsın
+                this._bSkipSelectionDetail = false;
+            }.bind(this), 0);
+
+            MessageToast.show(
+                this.getResourceBundle().getText("editModeActive") || "Düzenleme modu aktif"
+            );
         },
 
         /**
          * Row selected → show product detail in FCL mid-column.
          * Only opens detail for persisted rows (not transient/new).
+         * Edit butonundan tetiklenen selection'da detail açma.
          */
         onRowSelectionChange: function () {
+            // Edit butonundan tetiklenen selection'da detail açma
+            if (this._bSkipSelectionDetail) {
+                return;
+            }
+
             var oTable = this.byId("productsTable");
             var iIndex = oTable.getSelectedIndex();
 
@@ -774,8 +876,13 @@ sap.ui.define([
                     var nPrice = oContext.getProperty("price");
                     var nStock = oContext.getProperty("stock");
 
+                    var sCurrency = oContext.getProperty("currency");
+
                     if (!sName || sName.toString().trim() === "") {
                         aErrors.push(oBundle.getText("nameRequired"));
+                    }
+                    if (!sCurrency || sCurrency.toString().trim() === "") {
+                        aErrors.push(oBundle.getText("currencyRequired"));
                     }
                     if (nPrice !== null && nPrice !== undefined && parseFloat(nPrice) < 0) {
                         aErrors.push(oBundle.getText("priceNegative"));
