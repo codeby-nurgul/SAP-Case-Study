@@ -45,6 +45,7 @@
                             visibleRowCountMode="Auto"
                             minAutoRowCount="5"
                             enableSelectAll="true"
+                            rowHeight="48"
                         >
                             <!-- ── OVERFLOW TOOLBAR ── -->
                             <t:extension>

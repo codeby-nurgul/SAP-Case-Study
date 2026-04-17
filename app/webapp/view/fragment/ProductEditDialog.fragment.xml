@@ -1,0 +1,62 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+    <Dialog id="productEditDialog" title="{i18n>editProduct}" contentWidth="500px">
+        <content>
+            <form:SimpleForm
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanL="4" labelSpanM="4"
+                columnsL="1" columnsM="1"
+            >
+                <form:content>
+                    <!-- Name -->
+                    <Label text="{i18n>productName}" required="true" />
+                    <Input value="{name}" valueLiveUpdate="true" />
+
+                    <!-- Description -->
+                    <Label text="{i18n>productDescription}" />
+                    <TextArea value="{description}" rows="3" width="100%" />
+
+                    <!-- Price -->
+                    <Label text="{i18n>productPrice}" required="true" />
+                    <HBox alignItems="Center">
+                        <Input
+                            value="{
+                                path: 'price',
+                                type: 'sap.ui.model.odata.type.Decimal',
+                                constraints: { precision: 10, scale: 2 }
+                            }"
+                            type="Number"
+                            width="10rem"
+                        />
+                        <Input value="{currency}" maxLength="3" width="5rem" class="sapUiSmallMarginBegin" placeholder="TRY" />
+                    </HBox>
+
+                    <!-- Stock -->
+                    <Label text="{i18n>productStock}" required="true" />
+                    <StepInput value="{stock}" min="0" width="10rem" />
+
+                    <!-- Supplier -->
+                    <Label text="{i18n>productSupplier}" />
+                    <Select
+                        selectedKey="{supplier_ID}"
+                        forceSelection="false"
+                        items="{suppliersList>/items}"
+                        width="100%"
+                    >
+                        <core:Item key="{suppliersList>ID}" text="{suppliersList>name}" />
+                    </Select>
+                </form:content>
+            </form:SimpleForm>
+        </content>
+        <beginButton>
+            <Button text="{i18n>save}" type="Emphasized" press=".onSaveEditDialog" />
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>cancel}" press=".onCancelEditDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

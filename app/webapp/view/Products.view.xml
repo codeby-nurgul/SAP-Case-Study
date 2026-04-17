@@ -48,6 +48,7 @@
                             visibleRowCountMode="Auto"
                             minAutoRowCount="8"
                             enableSelectAll="true"
+                            rowHeight="48"
                         >
                             <!-- ── OVERFLOW TOOLBAR ── -->
                             <t:extension>
@@ -226,6 +227,7 @@
         <f:midColumnPages>
             <Page id="productDetailPage" title="{i18n>productDetail}">
                 <headerContent>
+                    <Button icon="sap-icon://edit"         press=".onEditDetail"             tooltip="Edit Product" type="Transparent" />
                     <Button icon="sap-icon://full-screen"  press=".onToggleDetailFullScreen" tooltip="Full Screen" />
                     <Button icon="sap-icon://decline"      press=".onCloseDetail"            tooltip="{i18n>close}" />
                 </headerContent>

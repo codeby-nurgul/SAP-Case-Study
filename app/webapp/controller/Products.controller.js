@@ -279,6 +279,60 @@ sap.ui.define([
             MessageToast.show(oBundle.getText("exportSuccess"));
         },
 
+        /**
+         * Product Detail sayfasındaki "Düzenle" (pencil) butonu:
+         * Seçili ürünü bir Pop-up (Fragment) üzerinden düzenlemeyi sağlar.
+         */
+        onEditDetail: function () {
+            var oView = this.getView();
+            var oContext = this.byId("productDetailPage").getBindingContext();
+
+            if (!oContext) {
+                return;
+            }
+
+            if (!this._pEditDialog) {
+                this._pEditDialog = Fragment.load({
+                    id: oView.getId(),
+                    name: "product.management.view.fragment.ProductEditDialog",
+                    controller: this
+                }).then(function (oDialog) {
+                    oView.addDependent(oDialog);
+                    return oDialog;
+                });
+            }
+
+            this._pEditDialog.then(function (oDialog) {
+                oDialog.setBindingContext(oContext);
+                oDialog.open();
+            });
+        },
+
+        /**
+         * Edit Pop-up içindeki "Kaydet" butonu.
+         * OData V4 auto-expand/batch mantığıyla çalışır.
+         */
+        onSaveEditDialog: function () {
+            this._pEditDialog.then(function (oDialog) {
+                oDialog.close();
+                MessageToast.show(this.getResourceBundle().getText("saveSuccess") || "Değişiklikler uygulandı");
+            }.bind(this));
+        },
+
+        /**
+         * Edit Pop-up içindeki "İptal" butonu.
+         * Sadece bu context üzerindeki değişiklikleri geri alır.
+         */
+        onCancelEditDialog: function () {
+            var oContext = this.byId("productDetailPage").getBindingContext();
+            if (oContext) {
+                oContext.resetChanges();
+            }
+            this._pEditDialog.then(function (oDialog) {
+                oDialog.close();
+            });
+        },
+
         /* ═══════════════════════════════════════════════
          *  SEARCH
          * ═══════════════════════════════════════════════ */

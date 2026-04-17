@@ -183,15 +183,10 @@ body,
     /* min-height: auto !important; */
 }
 
-.blueTable .sapUiTableTr {
-    height: 52px !important;
-    transition: background-color 0.3s ease !important;
-}
-
+/* Satıra hover efekti */
 .blueTable .sapUiTableTr:hover,
 .blueTable .sapUiTableTr:hover>td {
-    background-color: var(--sapHoverBg) !important;
-    cursor: pointer;
+    background-color: #F8FBFE !important;
 }
 
 /* Bo\u015F sat\u0131rlar\u0131 tamamen gizle */
@@ -205,21 +200,41 @@ body,
     background-color: var(--sapSelectedBg) !important;
 }
 
-/* T\u00FCm h\u00FCcrelerin i\u00E7indeki input ve select bile\u015Fenlerini s\u0131f\u0131rla */
+/* Tüm hücrelerin içindeki input ve select bileşenlerini sıfırla */
 .blueTable .sapUiTableTr>td .sapMInputBaseContentWrapper,
 .blueTable .sapUiTableTr>td .sapMSelect,
 .blueTable .sapUiTableTr>td .sapMInputBaseInner,
 .blueTable .sapUiTableTr>td input,
 .blueTable .sapUiTableTr>td select {
-    border: none !important;
+    border: 1px solid transparent !important;
     outline: none !important;
     box-shadow: none !important;
     background-color: transparent !important;
-    border-radius: 0 !important;
+    border-radius: 4px !important;
+    padding: 0 0.5rem !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
 }
 
-.editInput.sapMInputBaseHasFocus .sapMInputBaseContentWrapper,
-.editInput.sapMSelectFocused {
+/* Satır yüksekliği ve hizalama - Grid Table için güvenli yöntem */
+.blueTable .sapUiTableTD {
+    padding: 0 !important;
+    vertical-align: middle !important;
+}
+
+
+
+
+/* Edit Input için spesifik görsel iyileştirme */
+.editInput,
+.editInput .sapMInputBaseContentWrapper {
+    border-radius: 4px !important;
+}
+
+.editInput:focus-within {
+    background-color: rgba(0, 112, 242, 0.04) !important;
+}
+
+.editInput.sapMInputBaseHasFocus .sapMInputBaseContentWrapper {
     border-bottom: 2px solid var(--sapPrimaryBlue) !important;
 }
 
@@ -227,39 +242,27 @@ body,
  * sap.ui.table.Table — ROW HIGHLIGHT (CUSTOM CLASS)
  * ═══════════════════════════════════════════════ */
 
-.blueTable .sapUiTableTr.editHighlightRow,
-.blueTable .sapUiTableTr.editHighlightRow > td {
-    background-color: #E8F4FD !important;
+/* Seçili/Düzenlenen Satır Vurgusu */
+.blueTable tr.editHighlightRow,
+.blueTable tr.editHighlightRow>td {
+    background-color: #EBF5FF !important;
 }
 
-.blueTable .sapUiTableTr.editHighlightRow {
-    position: relative !important;
+/* Mavi Şerit: Sadece ilk hücrenin (genelde checkbox) soluna eklenir */
+.blueTable tr.editHighlightRow>td:first-child {
+    border-left: 4px solid var(--sapPrimaryBlue) !important;
 }
 
-.blueTable .sapUiTableTr.editHighlightRow::before {
-    content: "" !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    width: 4px !important;
-    background-color: var(--sapPrimaryBlue) !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
-}
 
-.blueTable .sapUiTableTr:not(.editHighlightRow):hover,
-.blueTable .sapUiTableTr:not(.editHighlightRow):hover > td {
-    background-color: #F5FAFE !important;
-}
-
-.blueTable .sapUiTableTr > td .editInput.sapMInputBaseHasFocus .sapMInputBaseContentWrapper,
-.blueTable .sapUiTableTr > td .editInput:focus-within .sapMInputBaseContentWrapper,
-.blueTable .sapUiTableTr > td .sapMInputFocused .sapMInputBaseContentWrapper {
+.blueTable .sapUiTableTr>td .editInput.sapMInputBaseHasFocus .sapMInputBaseContentWrapper,
+.blueTable .sapUiTableTr>td .editInput:focus-within .sapMInputBaseContentWrapper,
+.blueTable .sapUiTableTr>td .sapMInputFocused .sapMInputBaseContentWrapper,
+.blueTable .sapUiTableTr>td .editInput.sapMInputBaseHasFocus,
+.blueTable .sapUiTableTr>td .editInput:focus-within {
     border: 1px solid var(--sapPrimaryBlue) !important;
     border-radius: 4px !important;
-    box-shadow: 0 0 0 1px var(--sapPrimaryBlue) !important;
     background-color: #FFFFFF !important;
+    box-shadow: 0 0 0 1px rgba(0, 112, 242, 0.2) !important;
 }
 
 /* \u2500\u2500 Badges \u2500\u2500 */
