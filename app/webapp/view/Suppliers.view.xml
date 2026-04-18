@@ -3,6 +3,7 @@
     xmlns="sap.m"
     xmlns:f="sap.f"
     xmlns:t="sap.ui.table"
+    xmlns:rowmodes="sap.ui.table.rowmodes"
     xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"
     xmlns:u="sap.ui.unified"
@@ -42,11 +43,11 @@
                             selectionBehavior="RowSelector"
                             rowSelectionChange=".onRowSelectionChange"
                             sort=".onSort"
-                            visibleRowCountMode="Auto"
-                            minAutoRowCount="8"
                             enableSelectAll="true"
-                            rowHeight="48"
                         >
+                            <t:rowMode>
+                                <rowmodes:Auto minRowCount="8" rowContentHeight="48" />
+                            </t:rowMode>
                             <!-- ── OVERFLOW TOOLBAR ── -->
                             <t:extension>
                                 <OverflowToolbar style="Clear">
@@ -123,8 +124,8 @@
                                         </layoutData>
                                     </Button>
                                 </OverflowToolbar>
-                                <OverflowToolbar id="filterInfoToolbar" visible="false" style="Clear">
-                                    <Label id="filterInfoText" text="" class="sapUiSmallMarginBegin" />
+                                <OverflowToolbar id="suppliersFilterInfoToolbar" visible="false" style="Clear">
+                                    <Label id="suppliersFilterInfoText" text="" class="sapUiSmallMarginBegin" />
                                 </OverflowToolbar>
                             </t:extension>
 

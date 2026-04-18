@@ -528,8 +528,8 @@ sap.ui.define([
             }
 
             // 4) Update Visual Indicator & Badge
-            var oInfoToolbar = this.byId("filterInfoToolbar");
-            var oInfoText = this.byId("filterInfoText");
+            var oInfoToolbar = this.byId("productsFilterInfoToolbar");
+            var oInfoText = this.byId("productsFilterInfoText");
             var oFilterModel = this.getModel("filterModel");
             var iCount = (this._aAdvancedFilters ? this._aAdvancedFilters.length : 0) + (this._oSearchFilter ? 1 : 0);
 
