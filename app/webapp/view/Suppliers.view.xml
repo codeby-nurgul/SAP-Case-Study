@@ -65,9 +65,15 @@
                                     <Button
                                         icon="sap-icon://filter"
                                         press=".onOpenFilterDialog"
-                                        type="Transparent"
+                                        type="{filterModel>/buttonType}"
                                         tooltip="{i18n>filter}"
                                     >
+                                        <customData>
+                                            <BadgeCustomData 
+                                                value="{filterModel>/activeCount}" 
+                                                visible="{= ${filterModel>/activeCount} > 0 }"
+                                            />
+                                        </customData>
                                         <layoutData>
                                             <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>

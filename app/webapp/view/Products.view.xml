@@ -68,9 +68,15 @@
                                     <Button
                                         icon="sap-icon://filter"
                                         press=".onOpenFilterDialog"
-                                        type="Transparent"
+                                        type="{filterModel>/buttonType}"
                                         tooltip="{i18n>filter}"
                                     >
+                                        <customData>
+                                            <BadgeCustomData 
+                                                value="{filterModel>/activeCount}" 
+                                                visible="{= ${filterModel>/activeCount} > 0 }"
+                                            />
+                                        </customData>
                                         <layoutData>
                                             <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>
@@ -222,7 +228,6 @@
 
         <!-- ═══════════════════════════════════════════════
              MID COLUMN — Detail: Product Info + Supplier Info
-             Case study: "Seçilen ürünün tedarikçisi bu panelde listelenmelidir"
              ═══════════════════════════════════════════════ -->
         <f:midColumnPages>
             <Page id="productDetailPage" title="{i18n>productDetail}">

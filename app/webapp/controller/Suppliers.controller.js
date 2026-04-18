@@ -25,7 +25,9 @@ sap.ui.define([
                 conditions: [
                     { field: "name", operator: "Contains", value: "" }
                 ],
-                logicIndex: 0   // 0 = AND, 1 = OR
+                logicIndex: 0,   // 0 = AND, 1 = OR
+                activeCount: 0,
+                buttonType: "Transparent"
             });
             this.setModel(oFilterModel, "filterModel");
 
@@ -349,11 +351,24 @@ sap.ui.define([
 
         /** Reset all filters AND search bar */
         onClearFilters: function () {
+            // 1) Clear Model
             this.getModel("filterModel").setProperty("/conditions", [
                 { field: "name", operator: "Contains", value: "" }
             ]);
             this.getModel("filterModel").setProperty("/logicIndex", 0);
-            this.byId("suppliersTable").getBinding("rows").filter([]);
+
+            // 2) Clear Internal State
+            this._aAdvancedFilters = [];
+            this._oSearchFilter = null;
+            this._sSearchQuery = "";
+
+            // 3) Clear Search Field UI
+            var oSearchField = this.byId("suppliersSearch");
+            if (oSearchField) { oSearchField.setValue(""); }
+
+            // 4) Apply
+            this._applyCombinedFilters("suppliersTable");
+
             this._pFilterDialog.then(function (oDialog) {
                 oDialog.close();
             });
@@ -363,6 +378,60 @@ sap.ui.define([
             this._pFilterDialog.then(function (oDialog) {
                 oDialog.close();
             });
+        },
+
+        /**
+         * Merges Search and Advanced Filters with AND logic.
+         */
+        _applyCombinedFilters: function (sTableId) {
+            var aOverallFilters = [];
+            var oBundle = this.getResourceBundle();
+            var sStatusText = "";
+
+            // 1) Add Advanced Filters
+            if (this._aAdvancedFilters && this._aAdvancedFilters.length > 0) {
+                aOverallFilters.push(new Filter({
+                    filters: this._aAdvancedFilters,
+                    and: this._bFilterLogicIsAnd
+                }));
+                sStatusText = oBundle.getText("activeFiltersInfo", [this._aAdvancedFilters.length]);
+            }
+
+            // 2) Add Search Filter
+            if (this._oSearchFilter) {
+                aOverallFilters.push(this._oSearchFilter);
+                if (sStatusText) {
+                    sStatusText = oBundle.getText("filterCombined", [this._aAdvancedFilters.length]);
+                } else {
+                    sStatusText = oBundle.getText("searchInfo", [this._sSearchQuery]);
+                }
+            }
+
+            // 3) Apply to Table
+            var oBinding = this.byId(sTableId).getBinding("rows");
+            if (aOverallFilters.length > 0) {
+                oBinding.filter(new Filter({ filters: aOverallFilters, and: true }));
+            } else {
+                oBinding.filter([]);
+            }
+
+            // 4) Update Visual Indicator & Badge
+            var oInfoToolbar = this.byId("filterInfoToolbar");
+            var oInfoText = this.byId("filterInfoText");
+            var oFilterModel = this.getModel("filterModel");
+            var iCount = (this._aAdvancedFilters ? this._aAdvancedFilters.length : 0) + (this._oSearchFilter ? 1 : 0);
+
+            oFilterModel.setProperty("/activeCount", iCount);
+            oFilterModel.setProperty("/buttonType", iCount > 0 ? "Emphasized" : "Transparent");
+
+            if (oInfoToolbar && oInfoText) {
+                if (sStatusText) {
+                    oInfoText.setText(oBundle.getText("filterStatus", [sStatusText]));
+                    oInfoToolbar.setVisible(true);
+                } else {
+                    oInfoToolbar.setVisible(false);
+                }
+            }
         },
 
         /* ═══════════════════════════════════════════════

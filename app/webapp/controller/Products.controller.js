@@ -26,7 +26,9 @@ sap.ui.define([
                 conditions: [
                     { field: "name", operator: "Contains", value: "" }
                 ],
-                logicIndex: 0   // 0 = AND, 1 = OR
+                logicIndex: 0,   // 0 = AND, 1 = OR
+                activeCount: 0,
+                buttonType: "Transparent"
             });
             this.setModel(oFilterModel, "filterModel");
 
@@ -120,7 +122,7 @@ sap.ui.define([
         onAddProduct: function () {
             var oTable = this.byId("productsTable");
             var oBinding = oTable.getBinding("rows");
-            
+
             // Clear search/filters to ensure new row is visible
             var oSearchField = this.byId("productsSearch");
             if (oSearchField) { oSearchField.setValue(""); }
@@ -336,7 +338,6 @@ sap.ui.define([
             // 2. Close dialog
             oDialog.close();
 
-            // 3. 🚀 CRITICAL: Trigger global save to commit to backend and clear pending changes
             this.onSaveChanges();
         },
 
@@ -447,6 +448,9 @@ sap.ui.define([
                     if (aNumericFields.indexOf(oCond.field) !== -1) {
                         if (sOp === "Contains") { sOp = "EQ"; }
                         vValue = parseFloat(oCond.value);
+                        if (isNaN(vValue)) {
+                            return; // Skip invalid numeric filter
+                        }
                     }
                     aFilters.push(new Filter(oCond.field, sOp, vValue));
                 }
@@ -523,9 +527,15 @@ sap.ui.define([
                 oBinding.filter([]);
             }
 
-            // 4) Update Visual Indicator
+            // 4) Update Visual Indicator & Badge
             var oInfoToolbar = this.byId("filterInfoToolbar");
             var oInfoText = this.byId("filterInfoText");
+            var oFilterModel = this.getModel("filterModel");
+            var iCount = (this._aAdvancedFilters ? this._aAdvancedFilters.length : 0) + (this._oSearchFilter ? 1 : 0);
+
+            oFilterModel.setProperty("/activeCount", iCount);
+            oFilterModel.setProperty("/buttonType", iCount > 0 ? "Emphasized" : "Transparent");
+
             if (oInfoToolbar && oInfoText) {
                 if (sStatusText) {
                     oInfoText.setText(oBundle.getText("filterStatus", [sStatusText]));
@@ -608,9 +618,9 @@ sap.ui.define([
          * Detay paneli AÇMAZ.
          */
         onEditRow: function (oEvent) {
-            var oButton  = oEvent.getSource();
+            var oButton = oEvent.getSource();
             var oContext = oButton.getBindingContext();
-            var oTable   = this.byId("productsTable");
+            var oTable = this.byId("productsTable");
 
             // 1) Önceki highlight'ı temizle
             oTable.$().find("tr.sapUiTableTr.editHighlightRow").removeClass("editHighlightRow");
@@ -624,9 +634,9 @@ sap.ui.define([
             // 3) Checkbox'ı işaretle (UI5 selection API)
             // Detay panelinin açılmasını önlemek için flag'i önce set et
             this._bSkipSelectionDetail = true;
-            
+
             var aContexts = oTable.getBinding("rows").getContexts();
-            var iIndex    = aContexts.indexOf(oContext);
+            var iIndex = aContexts.indexOf(oContext);
             if (iIndex !== -1) {
                 // Diğer seçimleri koru, sadece bu satırı ekle
                 oTable.addSelectionInterval(iIndex, iIndex);
@@ -992,7 +1002,7 @@ sap.ui.define([
          * Return unique error messages after validating all rows.
          */
         _getUniqueErrors: function (aErrors) {
-             return [...new Set(aErrors)];
+            return [...new Set(aErrors)];
         },
 
         /* ═══════════════════════════════════════════════
