@@ -177,11 +177,6 @@ body,
     border-top: none !important;
 }
 
-/* Y\u00FCksekli\u011Fi i\u00E7eri\u011Fe uydurma */
-.blueTable .sapUiTableCCnt {
-    /* height: auto !important; */
-    /* min-height: auto !important; */
-}
 
 /* Satıra hover efekti */
 .blueTable .sapUiTableTr:hover,
@@ -196,7 +191,6 @@ body,
 
 /* Edit Mode Accent */
 .editingRow {
-    border-left: 3px solid var(--sapPrimaryBlue) !important;
     background-color: var(--sapSelectedBg) !important;
 }
 
@@ -245,13 +239,10 @@ body,
 /* Seçili/Düzenlenen Satır Vurgusu */
 .blueTable tr.editHighlightRow,
 .blueTable tr.editHighlightRow>td {
-    background-color: #EBF5FF !important;
+    background-color: var(--sapHoverBg) !important;
 }
 
-/* Mavi Şerit: Sadece ilk hücrenin (genelde checkbox) soluna eklenir */
-.blueTable tr.editHighlightRow>td:first-child {
-    border-left: 4px solid var(--sapPrimaryBlue) !important;
-}
+
 
 
 .blueTable .sapUiTableTr>td .editInput.sapMInputBaseHasFocus .sapMInputBaseContentWrapper,
@@ -261,7 +252,7 @@ body,
 .blueTable .sapUiTableTr>td .editInput:focus-within {
     border: 1px solid var(--sapPrimaryBlue) !important;
     border-radius: 4px !important;
-    background-color: #FFFFFF !important;
+    background-color: var(--sapSurface) !important;
     box-shadow: 0 0 0 1px rgba(0, 112, 242, 0.2) !important;
 }
 
@@ -372,7 +363,7 @@ body,
 
 .csvRowError {
     border-left: 4px solid var(--sapErrorRed) !important;
-    background-color: #fff8f8 !important;
+    background-color: rgba(241, 76, 76, 0.1) !important;
 }
 
 /* Sticky Action Bar */

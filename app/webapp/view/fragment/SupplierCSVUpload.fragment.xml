@@ -9,7 +9,7 @@
                 <u:FileUploader
                     id="supplierCSVUploader"
                     fileType="csv"
-                    placeholder="Select a CSV file..."
+                    placeholder="{i18n>csvSelectFile}"
                     change=".onCSVFileChange"
                     width="100%"
                     class="sapUiSmallMarginBottom"
@@ -44,7 +44,7 @@
                             </HBox>
                             <!-- Sağ: OK / Error -->
                             <ObjectStatus
-                                text="{= ${csvModel>type} === 'Success' ? 'OK' : 'Error'}"
+                                text="{= ${csvModel>type} === 'Success' ? ${i18n>ok} : ${i18n>validationError}}"
                                 state="{= ${csvModel>type} === 'Success' ? 'Success' : 'Error'}" />
                         </HBox>
                     </CustomListItem>

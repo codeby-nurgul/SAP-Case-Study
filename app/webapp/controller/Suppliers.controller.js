@@ -235,7 +235,14 @@ sap.ui.define([
                 ].join(",");
             });
 
-            var sCSV = "sep=,\nName,Email,Phone,Address\n" + aRows.join("\n");
+            var sHeader = [
+                oBundle.getText("exportHeaderName"),
+                oBundle.getText("exportHeaderEmail"),
+                oBundle.getText("exportHeaderPhone"),
+                oBundle.getText("exportHeaderAddress")
+            ].join(",");
+
+            var sCSV = "sep=,\n" + sHeader + "\n" + aRows.join("\n");
             var oBlob = new Blob(["\uFEFF" + sCSV], { type: "text/csv;charset=utf-8;" });
             var sUrl = URL.createObjectURL(oBlob);
             var oLink = document.createElement("a");
@@ -520,7 +527,7 @@ sap.ui.define([
         onCancelEditDialog: function () {
             this._pEditDialog.then(function (oDialog) {
                 var oContext = oDialog.getBindingContext();
-                if (oContext.hasPendingChanges()) {
+                if (oContext && oContext.hasPendingChanges()) {
                     oContext.resetChanges();
                 }
                 oDialog.close();
@@ -614,6 +621,7 @@ sap.ui.define([
         },
 
         _validateCSVClientSide: function (sContent, sFileName, oCSVModel, aRequiredCols) {
+            var oBundle = this.getResourceBundle();
             var aResults = [];
             var bAllPassed = true;
 
@@ -626,8 +634,8 @@ sap.ui.define([
             } catch (e) { bFormatValid = false; }
 
             aResults.push({
-                name: "CSV format is valid",
-                message: bFormatValid ? "" : "File cannot be parsed as CSV",
+                name: oBundle.getText("csvFormatValid"),
+                message: bFormatValid ? "" : oBundle.getText("csvFormatInvalid"),
                 type: bFormatValid ? "Success" : "Error"
             });
             if (!bFormatValid) { bAllPassed = false; }
@@ -643,8 +651,8 @@ sap.ui.define([
             var aMissing = aRequiredCols.filter(function (c) { return aHeaders.indexOf(c) === -1; });
             var bColsOk = aMissing.length === 0;
             aResults.push({
-                name: "Required columns are present",
-                message: bColsOk ? "" : "Missing: " + aMissing.join(", "),
+                name: oBundle.getText("csvColsPresent"),
+                message: bColsOk ? "" : oBundle.getText("csvColsMissing", [aMissing.join(", ")]),
                 type: bColsOk ? "Success" : "Error"
             });
             if (!bColsOk) { bAllPassed = false; }
@@ -670,8 +678,8 @@ sap.ui.define([
             }
             var bDataOk = aInvalid.length === 0;
             aResults.push({
-                name: "All columns are valid for this entry",
-                message: bDataOk ? "" : "Invalid: " + aInvalid.slice(0, 3).join(", ") + (aInvalid.length > 3 ? "..." : ""),
+                name: oBundle.getText("csvDataValid"),
+                message: bDataOk ? "" : oBundle.getText("csvDataInvalid", [aInvalid.slice(0, 3).join(", ") + (aInvalid.length > 3 ? "..." : "")]),
                 type: bDataOk ? "Success" : "Error"
             });
             if (!bDataOk) { bAllPassed = false; }
@@ -679,13 +687,13 @@ sap.ui.define([
             // 4. En az 1 satır var mı?
             var bHasRows = aDataRows.length > 0;
             aResults.push({
-                name: "File contains data rows",
-                message: bHasRows ? "" : "No data rows found",
+                name: oBundle.getText("csvHasRows"),
+                message: bHasRows ? "" : oBundle.getText("csvNoRows"),
                 type: bHasRows ? "Success" : "Error"
             });
             if (!bHasRows) { bAllPassed = false; }
 
-            oCSVModel.setProperty("/rowCountText", sFileName + " (" + aDataRows.length + " rows)");
+            oCSVModel.setProperty("/rowCountText", oBundle.getText("csvFileRows", [sFileName, aDataRows.length]));
             oCSVModel.setProperty("/results", aResults);
             oCSVModel.setProperty("/canUpload", bAllPassed);
         },
@@ -725,7 +733,7 @@ sap.ui.define([
                 if (oResult.success > 0) {
                     aResults.push({
                         row: "-",
-                        name: "Records Inserted",
+                        name: oBundle.getText("csvRecordsInserted"),
                         message: oBundle.getText("csvUploadSuccess", [oResult.success]),
                         type: "Success"
                     });
@@ -735,7 +743,7 @@ sap.ui.define([
                     oResult.errors.forEach(function (err) {
                         aResults.push({
                             row: err.row.toString(),
-                            name: "Column [" + err.column + "]",
+                            name: oBundle.getText("csvColumnLabel", [err.column]),
                             message: err.message,
                             type: "Error"
                         });
@@ -743,8 +751,8 @@ sap.ui.define([
                 } else if (oResult.failed > 0) {
                     aResults.push({
                         row: "-",
-                        name: "Import Failed",
-                        message: oResult.failed + " records failed to import.",
+                        name: oBundle.getText("csvImportFailed"),
+                        message: oBundle.getText("csvImportFailedMsg", [oResult.failed]),
                         type: "Error"
                     });
                 }
@@ -766,7 +774,7 @@ sap.ui.define([
             }.bind(this)).catch(function (oError) {
                 var aResults = [{
                     row: "-",
-                    name: "System Error",
+                    name: oBundle.getText("csvSystemError"),
                     message: oError.message || oBundle.getText("csvUploadFailed"),
                     type: "Error"
                 }];
