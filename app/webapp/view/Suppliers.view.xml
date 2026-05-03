@@ -189,8 +189,7 @@
             </Page>
         </f:beginColumnPages>
 
-        <!-- Detail: Supplier Info + Products
-             Case study: "Tedarikçinin ürünleri bu panelde listelenmelidir" -->
+        <!-- Detail: Supplier Info + Products -->
         <f:midColumnPages>
             <Page id="supplierDetailPage" title="{i18n>supplierDetail}">
                 <headerContent>
@@ -234,9 +233,6 @@
                             <Text text="{country}" />
                         </form:SimpleForm>
 
-                        <!-- Products of this Supplier
-                             Case study: "Tedarikçinin ürünleri bu panelde listelenmelidir"
-                             FIX: Ürün kartında currency hardcoded "TRY" → {currency} binding -->
                         <Panel headerText="{i18n>supplierProducts}" class="sapUiMediumMarginTop dashboardCard">
                             <List
                                 id="supplierProductsList"

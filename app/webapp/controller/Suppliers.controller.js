@@ -586,7 +586,6 @@ sap.ui.define([
             // 2. Close dialog
             oDialog.close();
 
-            // 3. 🚀 CRITICAL: Trigger global save to commit to backend and clear pending changes
             this.onSaveChanges();
         },
 
@@ -832,7 +831,6 @@ sap.ui.define([
                      MessageToast.show(oBundle.getText("csvUploadSuccess", [oResult.success]));
                      this.byId("suppliersTable").getBinding("rows").refresh();
 
-                     // ⭐ Success durumunda dialog'u kapat
                      setTimeout(function () {
                          this.onCloseCSVDialog();
                      }.bind(this), 1500);

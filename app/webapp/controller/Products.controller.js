@@ -360,11 +360,8 @@ sap.ui.define([
          * ═══════════════════════════════════════════════ */
 
         /**
-         * Live search across name & description columns (OR logic).
-         */
-        /**
-         * Live search across name & description columns (OR logic).
-         * Now additive to advanced filters.
+         * Live search across name & description columns.
+         * additive to advanced filters.
          */
         onSearch: function (oEvent) {
             var sQuery = oEvent.getParameter("query") || oEvent.getParameter("newValue") || "";
@@ -615,34 +612,30 @@ sap.ui.define([
 
         /**
          * Edit butonu (kalem): satırı vurgular + checkbox'ı işaretler + ilk Input'a focus verir.
-         * Detay paneli AÇMAZ.
          */
         onEditRow: function (oEvent) {
             var oButton = oEvent.getSource();
             var oContext = oButton.getBindingContext();
             var oTable = this.byId("productsTable");
 
-            // 1) Önceki highlight'ı temizle
+            
             oTable.$().find("tr.sapUiTableTr.editHighlightRow").removeClass("editHighlightRow");
 
-            // 2) Bu satıra highlight class'ı ekle
+            
             var $row = oButton.$().closest("tr.sapUiTableTr");
             if ($row.length) {
                 $row.addClass("editHighlightRow");
             }
 
-            // 3) Checkbox'ı işaretle (UI5 selection API)
-            // Detay panelinin açılmasını önlemek için flag'i önce set et
             this._bSkipSelectionDetail = true;
 
             var aContexts = oTable.getBinding("rows").getContexts();
             var iIndex = aContexts.indexOf(oContext);
             if (iIndex !== -1) {
-                // Diğer seçimleri koru, sadece bu satırı ekle
+                
                 oTable.addSelectionInterval(iIndex, iIndex);
             }
 
-            // 4) İlk Input'a focus + select
             setTimeout(function () {
                 if ($row.length) {
                     var $firstInput = $row.find("input.sapMInputBaseInner").first();
@@ -650,7 +643,7 @@ sap.ui.define([
                         $firstInput.trigger("focus").trigger("select");
                     }
                 }
-                // Flag'i sıfırla — sonraki kullanıcı seçimleri normal çalışsın
+        
                 this._bSkipSelectionDetail = false;
             }.bind(this), 0);
 
@@ -863,7 +856,6 @@ sap.ui.define([
 
         /**
          * Call the unbound OData action: uploadProductsCSV
-         * Uses OData V4 action binding (NOT fetch/ajax).
          */
         _callProductCSVAction: function (sCsvContent) {
             var oModel = this.getModel();
@@ -915,7 +907,6 @@ sap.ui.define([
                     // Refresh table to show newly imported rows
                     this.byId("productsTable").getBinding("rows").refresh();
 
-                    // ⭐ Success durumunda dialog'u kapat
                     setTimeout(function () {
                         this.onCloseCSVDialog();
                     }.bind(this), 1500);

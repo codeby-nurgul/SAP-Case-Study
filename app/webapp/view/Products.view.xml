@@ -112,9 +112,7 @@
                                             <OverflowToolbarLayoutData priority="Low" />
                                         </layoutData>
                                     </Button>
-                                    <!-- FIX: AlwaysOverflow → Low
-                                         Geniş ekranda (OneColumn) görünür,
-                                         TwoColumns layout'ta toolbar daraldığında overflow menüye gider -->
+                                    
                                     <Button
                                         id="deleteProductsBtn"
                                         text="{i18n>delete}"
@@ -172,7 +170,7 @@
                                     </t:template>
                                 </t:Column>
 
-                                <!-- FIX: Hardcoded "TRY" kaldırıldı → modelden binding -->
+                                
                                 <t:Column>
                                     <Label text="{i18n>currency}" />
                                     <t:template>

@@ -224,7 +224,6 @@ module.exports = class ProductService extends cds.ApplicationService {
      *   - Windows (\r\n) and Unix (\n) line endings
      *   - Empty trailing lines
      *
-     * NO external libraries used — pure string parsing.
      */
     _parseCSV(csvText) {
         const lines = this._splitCSVLines(csvText);

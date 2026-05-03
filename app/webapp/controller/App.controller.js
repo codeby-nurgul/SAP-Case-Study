@@ -75,9 +75,7 @@ sap.ui.define([
             });
         },
 
-        /**
-         * Opens the stock alert popover fragment.
-         */
+       
         /**
          * Opens the stock alert dialog fragment.
          */
